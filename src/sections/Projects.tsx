@@ -61,6 +61,8 @@ export default function Projects() {
     return () => ctx.revert()
   }, [])
 
+  const featuredProjects = projectData.filter(p => p.featured)
+
   return (
     <section 
       id="projects" 
@@ -73,7 +75,7 @@ export default function Projects() {
         </h2>
       </div>
 
-      {projectData.map((project, index) => (
+      {featuredProjects.map((project, index) => (
         <div 
           key={index} 
           className="project-panel relative w-screen h-screen flex-shrink-0 flex items-center justify-center p-8 md:p-24"

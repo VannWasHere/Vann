@@ -1,38 +1,97 @@
 [
     {
-        "title": "Aura Dashboard",
-        "description": "A high-performance analytics dashboard designed for real-time data visualization with immersive dark mode aesthetics.",
-        "tech": [
-            "React",
-            "Tailwind",
-            "Framer Motion"
-        ],
-        "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
-        "link": "https://example.com/aura",
-        "year": "2025"
-    },
-    {
-        "title": "Nexus E-Commerce",
-        "description": "Next-generation storefront featuring seamless transitions, 3D product previews, and lightning-fast checkout.",
+        "title": "CMS Application",
+        "description": "Designed and developed both frontend (User View) and backend CMS for Lippo Mall Indonesia. Built frontend using NextJS with responsive design. Developed seamless custom CMS using Laravel and React.",
         "tech": [
             "Next.js",
-            "GSAP",
-            "Stripe"
+            "Laravel",
+            "MariaDB",
+            "Tailwind CSS"
         ],
-        "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
-        "link": "https://example.com/nexus",
-        "year": "2024"
+        "image": "",
+        "link": "",
+        "year": "2025",
+        "featured": true
     },
     {
-        "title": "Nebula Portfolio",
-        "description": "An award-winning interactive portfolio template with smooth parallax scrolling and webGL elements.",
+        "title": "Styles — Lippo Member's App",
+        "description": "Developed mobile UI based on Figma designs for Lippo Mall Indonesia's member application. Created CI/CD pipelines for production deployment.",
         "tech": [
-            "Vite",
-            "Three.js",
-            "Tailwind"
+            "React Native",
+            "Metro"
         ],
-        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
-        "link": "https://example.com/nebula",
-        "year": "2024"
+        "image": "",
+        "link": "",
+        "year": "2025",
+        "featured": true
+    },
+    {
+        "title": "HR Recruitment App",
+        "description": "Built a fullstack HR recruitment system with AI-powered CV screening. Finetuned models for targeted responses. Integrated OCR for automated document processing.",
+        "tech": [
+            "Next.js",
+            "FastAPI",
+            "Ollama",
+            "Python"
+        ],
+        "image": "",
+        "link": "",
+        "year": "2025",
+        "featured": false
+    },
+    {
+        "title": "Contract Management System",
+        "description": "Designed and developed a fullstack web application to streamline contract management between companies and clients with responsive UI and robust backend services.",
+        "tech": [
+            "React",
+            "FastAPI",
+            "PostgreSQL",
+            "Pocketbase"
+        ],
+        "image": "",
+        "link": "",
+        "year": "2024",
+        "featured": false
+    },
+    {
+        "title": "On-Premise Document Collaboration",
+        "description": "Developed a real-time collaborative editing tool for Bank Indonesia. Integrated CKEditor with WebSocket support for multi-user editing. Managed on-premise infrastructure on OCP.",
+        "tech": [
+            "Vue",
+            ".NET",
+            "OCP",
+            "CKEditor",
+            "MySQL"
+        ],
+        "image": "",
+        "link": "",
+        "year": "2024",
+        "featured": false
+    },
+    {
+        "title": "Huawei Product Portfolio Web",
+        "description": "Developed frontend application for promoting company product portfolio with responsive mobile-first design.",
+        "tech": [
+            "Vue",
+            "Tailwind CSS"
+        ],
+        "image": "",
+        "link": "",
+        "year": "2024",
+        "featured": false
+    },
+    {
+        "title": "Motorcycle Price Prediction",
+        "description": "Built a deep learning model deployed on Flask with a React frontend. Designed the API system for communication between the frontend and the prediction model.",
+        "tech": [
+            "React",
+            "Tailwind CSS",
+            "Flask",
+            "Python"
+        ],
+        "image": "",
+        "link": "",
+        "year": "2023",
+        "featured": false
     }
 ]

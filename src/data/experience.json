@@ -1,20 +1,26 @@
 [
     {
-        "role": "Senior Frontend Engineer",
-        "company": "Acme Corp",
-        "year": "2023 - Present",
-        "desc": "Led the core UI architecture redesign, cutting load times by 40% and deploying a generic design system."
+        "role": "Solution Expert",
+        "company": "Infracom Technology",
+        "year": "Sep 2024 - Present",
+        "desc": "Conducted Proof of Concept (PoC) and product presentations to clients. Analyzed customer problems and proposed effective, customized solutions. Led a small team throughout the project lifecycle and collaboration."
     },
     {
         "role": "Fullstack Developer",
-        "company": "Globex React",
-        "year": "2021 - 2023",
-        "desc": "Built high-performance financial dashboards handling thousands of real-time datapoints with optimized renders."
+        "company": "Infracom Technology",
+        "year": "Aug 2024 - Present",
+        "desc": "Developed applications using Low-Code platforms and traditional development methods. Built and delivered solutions addressing specific customer challenges. Performed preventive and corrective maintenance on existing systems."
     },
     {
-        "role": "Web Developer Intern",
-        "company": "Initech",
-        "year": "2020 - 2021",
-        "desc": "Maintained legacy codebases while migrating core components to React and modernizing the tech stack."
+        "role": "Application Developer Intern",
+        "company": "Infracom Technology",
+        "year": "Jan 2024 - Aug 2024",
+        "desc": "Developed internal applications for business cases. Built both frontend and backend applications. Maintained internal tools and delivered them to internal users."
+    },
+    {
+        "role": "Lab Assistant — Web & Android Programming",
+        "company": "Multimedia Nusantara University",
+        "year": "Aug 2023 - Dec 2023",
+        "desc": "Taught 40 students in Web Programming using PHP and Laravel. Guided students in Android development using Java and Android Studio. Explained OOP concepts for both web and mobile development."
     }
 ]

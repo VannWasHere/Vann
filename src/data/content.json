@@ -1,13 +1,13 @@
 {
     "hero": {
         "title": "Vann",
-        "subtitle": "Developer & AI Enthusiast",
+        "subtitle": "Software Engineer & AI Enthusiast",
         "scrollText": "Scroll"
     },
     "about": {
-        "sectionSubtitle": "[ 01 ] The Origin",
-        "headline": "Crafting digital experiences that merge aesthetics with performance.",
-        "description": "I'm Vann, a passionate developer who brings complex ideas to life. I believe in writing modular, highly performant code wrapped in stunning immersive interfaces."
+        "sectionSubtitle": "[ 01 ] About Me",
+        "headline": "Building practical digital solutions with aesthetics and performance.",
+        "description": "I have approximately three years of professional experience in software development and a strong passion for turning real-world problems into practical and impactful digital solutions. I am actively seeking opportunities to further expand my expertise in tech, particularly in software development and artificial intelligence."
     },
     "projectsSection": {
         "sectionSubtitle": "[ 02 ] Selected Works"
@@ -22,13 +22,15 @@
     "contact": {
         "sectionSubtitle": "[ 05 ] Let's Talk",
         "title": "Ready to innovate?",
-        "description": "Whether it's a new enterprise application or a scalable frontend system, I'm just a click away.",
+        "description": "Whether it's a fullstack application, AI integration, or a scalable frontend system — I'm just a message away.",
         "phoneLabel": "+62 813 1078 3796",
         "phoneLink": "https://wa.me/6281310783796",
         "emailLabel": "justinedonovan812@gmail.com",
         "emailValue": "justinedonovan812@gmail.com"
     },
     "footer": {
-        "text": "Vann. Designed with aesthetics in mind."
+        "text": "Vann. Designed with aesthetics in mind.",
+        "github": "https://github.com/justinedonovan",
+        "linkedin": "https://linkedin.com/in/justinedonovan"
     }
 }

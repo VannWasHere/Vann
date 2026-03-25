@@ -1,42 +1,78 @@
 [
     {
         "name": "React",
-        "icon": "FaReact",
-        "years": 4
+        "icon": "FaReact"
     },
     {
-        "name": "TypeScript",
-        "icon": "SiTypescript",
-        "years": 3
+        "name": "React Native",
+        "icon": "FaReact"
+    },
+    {
+        "name": "Next.js",
+        "icon": "SiNextdotjs"
+    },
+    {
+        "name": "Angular",
+        "icon": "SiAngular"
+    },
+    {
+        "name": "Vue",
+        "icon": "SiVuedotjs"
     },
     {
         "name": "JavaScript",
-        "icon": "SiJavascript",
-        "years": 5
+        "icon": "SiJavascript"
+    },
+    {
+        "name": "HTML",
+        "icon": "FaHtml5"
+    },
+    {
+        "name": "CSS",
+        "icon": "FaCss3Alt"
     },
     {
         "name": "Tailwind CSS",
-        "icon": "SiTailwindcss",
-        "years": 3
-    },
-    {
-        "name": "Framer Motion",
-        "icon": "SiFramer",
-        "years": 2
-    },
-    {
-        "name": "GSAP",
-        "icon": "SiGreensock",
-        "years": 2
-    },
-    {
-        "name": "Node.js",
-        "icon": "FaNodeJs",
-        "years": 3
+        "icon": "SiTailwindcss"
     },
     {
         "name": "Python",
-        "icon": "SiPython",
-        "years": 2
+        "icon": "SiPython"
+    },
+    {
+        "name": "FastAPI",
+        "icon": "SiFastapi"
+    },
+    {
+        "name": "Express.js",
+        "icon": "SiExpress"
+    },
+    {
+        "name": "Golang",
+        "icon": "SiGo"
+    },
+    {
+        "name": "Laravel",
+        "icon": "SiLaravel"
+    },
+    {
+        "name": "PostgreSQL",
+        "icon": "SiPostgresql"
+    },
+    {
+        "name": "MySQL",
+        "icon": "SiMysql"
+    },
+    {
+        "name": "Git",
+        "icon": "FaGitAlt"
+    },
+    {
+        "name": "Docker",
+        "icon": "FaDocker"
+    },
+    {
+        "name": "Linux",
+        "icon": "FaLinux"
     }
 ]

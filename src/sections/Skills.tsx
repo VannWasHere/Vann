@@ -4,8 +4,12 @@ import { gsap } from 'gsap'
 import skillsData from '../data/skills.json'
 import contentData from '../data/content.json'
 
-import { FaReact, FaNodeJs } from 'react-icons/fa'
-import { SiTypescript, SiJavascript, SiTailwindcss, SiFramer, SiGreensock, SiPython } from 'react-icons/si'
+import { FaReact, FaNodeJs, FaHtml5, FaCss3Alt, FaGitAlt, FaDocker, FaLinux } from 'react-icons/fa'
+import { 
+  SiTypescript, SiJavascript, SiTailwindcss, SiFramer, SiGreensock, SiPython,
+  SiNextdotjs, SiAngular, SiVuedotjs, SiFastapi, SiExpress, SiGo, SiLaravel,
+  SiPostgresql, SiMysql
+} from 'react-icons/si'
 
 const iconMap: Record<string, React.ReactNode> = {
   "FaReact": <FaReact />,
@@ -15,7 +19,21 @@ const iconMap: Record<string, React.ReactNode> = {
   "SiFramer": <SiFramer />,
   "SiGreensock": <SiGreensock />,
   "FaNodeJs": <FaNodeJs />,
-  "SiPython": <SiPython />
+  "SiPython": <SiPython />,
+  "SiNextdotjs": <SiNextdotjs />,
+  "SiAngular": <SiAngular />,
+  "SiVuedotjs": <SiVuedotjs />,
+  "FaHtml5": <FaHtml5 />,
+  "FaCss3Alt": <FaCss3Alt />,
+  "SiFastapi": <SiFastapi />,
+  "SiExpress": <SiExpress />,
+  "SiGo": <SiGo />,
+  "SiLaravel": <SiLaravel />,
+  "SiPostgresql": <SiPostgresql />,
+  "SiMysql": <SiMysql />,
+  "FaGitAlt": <FaGitAlt />,
+  "FaDocker": <FaDocker />,
+  "FaLinux": <FaLinux />
 }
 
 export default function Skills() {
@@ -63,10 +81,6 @@ export default function Skills() {
               </div>
               
               <h3 className="text-lg font-medium text-zinc-200 tracking-wide">{skill.name}</h3>
-              
-              <div className="mt-2 text-sm text-zinc-500 font-mono font-light">
-                {skill.years} YOE
-              </div>
             </motion.div>
           ))}
         </div>
