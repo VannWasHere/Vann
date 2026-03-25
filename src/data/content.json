@@ -1,0 +1,34 @@
+{
+    "hero": {
+        "title": "Vann",
+        "subtitle": "Developer & AI Enthusiast",
+        "scrollText": "Scroll"
+    },
+    "about": {
+        "sectionSubtitle": "[ 01 ] The Origin",
+        "headline": "Crafting digital experiences that merge aesthetics with performance.",
+        "description": "I'm Vann, a passionate developer who brings complex ideas to life. I believe in writing modular, highly performant code wrapped in stunning immersive interfaces."
+    },
+    "projectsSection": {
+        "sectionSubtitle": "[ 02 ] Selected Works"
+    },
+    "experienceSection": {
+        "sectionSubtitle": "[ 03 ] Chronicle",
+        "title": "Experience"
+    },
+    "skillsSection": {
+        "sectionSubtitle": "[ 04 ] Tech Arsenal"
+    },
+    "contact": {
+        "sectionSubtitle": "[ 05 ] Let's Talk",
+        "title": "Ready to innovate?",
+        "description": "Whether it's a new enterprise application or a scalable frontend system, I'm just a click away.",
+        "phoneLabel": "+62 813 1078 3796",
+        "phoneLink": "https://wa.me/6281310783796",
+        "emailLabel": "justinedonovan812@gmail.com",
+        "emailValue": "justinedonovan812@gmail.com"
+    },
+    "footer": {
+        "text": "Vann. Designed with aesthetics in mind."
+    }
+}

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { gsap } from 'gsap'
-
 import projectData from '../data/projects.json'
-import { FaReact, FaChrome } from 'react-icons/fa'
+import contentData from '../data/content.json'
+import { FaReact, FaChrome, FaArrowRight } from 'react-icons/fa'
 import { SiNextdotjs, SiVite, SiTailwindcss, SiTypescript, SiFramer, SiThreedotjs, SiPython } from 'react-icons/si'
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -32,31 +32,29 @@ export default function Projects() {
           trigger: containerRef.current,
           pin: true,
           scrub: 1,
-          snap: {
-            snapTo: 1 / (panels.length - 1),
-            duration: { min: 0.2, max: 1 },
-            delay: 0.1,
-          },
-          end: () => "+=" + containerRef.current!.offsetWidth,
+          end: () => "+=" + containerRef.current!.offsetWidth * 1.5,
         }
       })
       
       panels.forEach((panel: any) => {
-        gsap.fromTo(panel.querySelector('.project-img'), 
-          { scale: 1.2, xPercent: -10 },
-          { 
-            scale: 1, 
-            xPercent: 10,
-            ease: "none",
-            scrollTrigger: {
-              trigger: panel,
-              containerAnimation: horizontalAnimation,
-              start: "left center",
-              end: "right center",
-              scrub: true,
+        const img = panel.querySelector('.project-img');
+        if (img) {
+          gsap.fromTo(img, 
+            { scale: 1.2, xPercent: -10 },
+            { 
+              scale: 1, 
+              xPercent: 10,
+              ease: "none",
+              scrollTrigger: {
+                trigger: panel,
+                containerAnimation: horizontalAnimation,
+                start: "left center",
+                end: "right center",
+                scrub: true,
+              }
             }
-          }
-        )
+          )
+        }
       })
     }, containerRef)
     
@@ -71,7 +69,7 @@ export default function Projects() {
     >
       <div className="absolute top-10 left-10 z-20">
         <h2 className="text-zinc-500 font-mono tracking-widest uppercase text-sm mb-4">
-          [ 02 ] Selected Works
+          {contentData.projectsSection.sectionSubtitle}
         </h2>
       </div>
 
@@ -105,9 +103,15 @@ export default function Projects() {
             <div className="flex-1 flex flex-col gap-6">
                <div className="text-zinc-400 font-mono text-xl">{project.year}</div>
                <h3 className="text-5xl md:text-7xl font-bold tracking-tight">{project.title}</h3>
-               <p className="text-xl text-zinc-300 font-light leading-relaxed">
-                 {project.description}
-               </p>
+               <motion.div 
+                 initial={{ opacity: 0, y: 30 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 transition={{ duration: 1, ease: 'easeOut' }}
+                 viewport={{ once: true, margin: '-20%' }}>
+                 <p className="text-xl text-zinc-300 font-light leading-relaxed">
+                   {project.description}
+                 </p>
+               </motion.div>
                
                <div className="flex flex-wrap gap-4 mt-4">
                  {project.tech.map((t, i) => (
@@ -125,7 +129,7 @@ export default function Projects() {
                  target="_blank"
                  rel="noopener noreferrer"
                  whileHover={{ x: 10 }}
-                 className="mt-8 text-xl font-medium inline-flex items-center gap-4 text-blue-400 hover:text-blue-300 w-fit"
+                 className="mt-8 text-xl font-medium inline-flex items-center gap-4 text-red-400 hover:text-red-300 w-fit"
                >
                  View Project 
                  <span className="h-0.5 w-12 bg-current block" />
@@ -134,6 +138,25 @@ export default function Projects() {
           </div>
         </div>
       ))}
+      
+      {/* View All Projects Extra Slide */}
+      <div className="project-panel relative w-screen h-screen flex-shrink-0 flex items-center justify-center bg-zinc-950 p-8">
+        <motion.a 
+          href="/projects" 
+          whileHover={{ scale: 1.05 }}
+          className="group flex flex-col items-center gap-6"
+        >
+          <div className="w-32 h-32 rounded-full border border-zinc-700 group-hover:border-red-500 flex items-center justify-center transition-colors shadow-2xl group-hover:shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+             <FaArrowRight className="text-4xl text-zinc-300 group-hover:text-white transition-colors" />
+          </div>
+          <h3 className="text-4xl md:text-5xl font-light tracking-wide text-white group-hover:text-red-400 transition-colors">
+            See All Projects
+          </h3>
+          <p className="text-zinc-500 uppercase tracking-widest font-mono text-sm max-w-sm text-center">
+            Discover the full archive of modern web applications and components.
+          </p>
+        </motion.a>
+      </div>
     </section>
   )
 }

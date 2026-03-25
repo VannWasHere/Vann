@@ -1,0 +1,20 @@
+[
+    {
+        "role": "Senior Frontend Engineer",
+        "company": "Acme Corp",
+        "year": "2023 - Present",
+        "desc": "Led the core UI architecture redesign, cutting load times by 40% and deploying a generic design system."
+    },
+    {
+        "role": "Fullstack Developer",
+        "company": "Globex React",
+        "year": "2021 - 2023",
+        "desc": "Built high-performance financial dashboards handling thousands of real-time datapoints with optimized renders."
+    },
+    {
+        "role": "Web Developer Intern",
+        "company": "Initech",
+        "year": "2020 - 2021",
+        "desc": "Maintained legacy codebases while migrating core components to React and modernizing the tech stack."
+    }
+]
