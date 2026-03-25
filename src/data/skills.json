@@ -1,0 +1,42 @@
+[
+    {
+        "name": "React",
+        "icon": "FaReact",
+        "years": 4
+    },
+    {
+        "name": "TypeScript",
+        "icon": "SiTypescript",
+        "years": 3
+    },
+    {
+        "name": "JavaScript",
+        "icon": "SiJavascript",
+        "years": 5
+    },
+    {
+        "name": "Tailwind CSS",
+        "icon": "SiTailwindcss",
+        "years": 3
+    },
+    {
+        "name": "Framer Motion",
+        "icon": "SiFramer",
+        "years": 2
+    },
+    {
+        "name": "GSAP",
+        "icon": "SiGreensock",
+        "years": 2
+    },
+    {
+        "name": "Node.js",
+        "icon": "FaNodeJs",
+        "years": 3
+    },
+    {
+        "name": "Python",
+        "icon": "SiPython",
+        "years": 2
+    }
+]

@@ -1,0 +1,38 @@
+[
+    {
+        "title": "Aura Dashboard",
+        "description": "A high-performance analytics dashboard designed for real-time data visualization with immersive dark mode aesthetics.",
+        "tech": [
+            "React",
+            "Tailwind",
+            "Framer Motion"
+        ],
+        "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
+        "link": "https://example.com/aura",
+        "year": "2025"
+    },
+    {
+        "title": "Nexus E-Commerce",
+        "description": "Next-generation storefront featuring seamless transitions, 3D product previews, and lightning-fast checkout.",
+        "tech": [
+            "Next.js",
+            "GSAP",
+            "Stripe"
+        ],
+        "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop",
+        "link": "https://example.com/nexus",
+        "year": "2024"
+    },
+    {
+        "title": "Nebula Portfolio",
+        "description": "An award-winning interactive portfolio template with smooth parallax scrolling and webGL elements.",
+        "tech": [
+            "Vite",
+            "Three.js",
+            "Tailwind"
+        ],
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop",
+        "link": "https://example.com/nebula",
+        "year": "2024"
+    }
+]
