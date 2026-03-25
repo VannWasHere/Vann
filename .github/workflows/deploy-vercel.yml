@@ -1,0 +1,28 @@
+# Deploys the production site on every push to main/master.
+# Add these GitHub repo secrets (Settings → Secrets and variables → Actions):
+#   VERCEL_TOKEN      — https://vercel.com/account/tokens (create token)
+#   VERCEL_ORG_ID     — from .vercel/project.json → orgId (team_… or user_…)
+#   VERCEL_PROJECT_ID — from .vercel/project.json → projectId (prj_…)
+#
+# If you later connect this repo under Vercel → Project → Settings → Git,
+# turn off one of the two automations so you do not get double deploys.
+
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Vercel (production)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: npx vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
