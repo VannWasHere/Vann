@@ -31,11 +31,15 @@ export default function AllProjects() {
               className="group block relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 shadow-2xl transition-all hover:border-red-500/50"
             >
               <div className="h-48 md:h-64 overflow-hidden relative">
-                <img 
-                  src={project.image} 
-                  alt={project.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                {project.image ? (
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-950" aria-hidden />
+                )}
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors duration-500" />
               </div>
               

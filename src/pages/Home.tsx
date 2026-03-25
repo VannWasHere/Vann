@@ -25,8 +25,8 @@ export default function Home() {
       <CustomCursor />
       
       {/* Sections structure with snapping */}
-      <div id="smooth-wrapper">
-        <div id="smooth-content">
+      <div id="smooth-wrapper" className="relative">
+        <div id="smooth-content" className="relative">
           <Hero />
           <About />
           <Projects />

@@ -99,22 +99,30 @@ export default function Projects() {
         >
           {/* Background image container */}
           <div className="absolute inset-0 overflow-hidden opacity-30 z-0">
-             <img 
-               src={project.image} 
-               alt={`${project.title} Background`} 
-               className="project-img w-full h-full object-cover blur-sm"
-             />
+             {project.image ? (
+               <img 
+                 src={project.image} 
+                 alt={`${project.title} Background`} 
+                 className="project-img w-full h-full object-cover blur-sm"
+               />
+             ) : (
+               <div className="project-img w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-950" aria-hidden />
+             )}
              <div className="absolute inset-0 bg-black/60 mix-blend-multiply" />
           </div>
 
           <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 w-full relative group">
                <div className="overflow-hidden rounded-xl border border-white/10 shadow-2xl">
-                 <img 
-                   src={project.image} 
-                   alt={project.title}
-                   className="w-full h-[40vh] md:h-[60vh] object-cover transition-transform duration-700 group-hover:scale-105"
-                 />
+                 {project.image ? (
+                   <img 
+                     src={project.image} 
+                     alt={project.title}
+                     className="w-full h-[40vh] md:h-[60vh] object-cover transition-transform duration-700 group-hover:scale-105"
+                   />
+                 ) : (
+                   <div className="w-full h-[40vh] md:h-[60vh] bg-gradient-to-br from-zinc-800 to-zinc-950" aria-hidden />
+                 )}
                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
                </div>
             </div>
