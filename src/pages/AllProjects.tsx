@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import projectData from '../data/projects.json'
+import CustomCursor from '../components/CustomCursor'
 
 // Reuse identical style or simple layout
 export default function AllProjects() {
   return (
     <main className="min-h-screen bg-black text-white p-6 md:p-12 lg:p-24 selection:bg-red-500/30 selection:text-white">
+      <CustomCursor />
       <Link to="/" className="text-zinc-500 hover:text-white transition-colors uppercase tracking-widest text-sm font-mono flex items-center gap-2 mb-12">
         <span className="text-xl">&larr;</span> Back to Home
       </Link>
