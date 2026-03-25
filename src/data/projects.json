@@ -77,10 +77,10 @@
             "Vue",
             "Tailwind CSS"
         ],
-        "image": "",
-        "link": "",
+        "image": "/huawei.png",
+        "link": "https://huawei.infracom-tech.com/",
         "year": "2024",
-        "featured": false
+        "featured": true
     },
     {
         "title": "Motorcycle Price Prediction",
