@@ -3,18 +3,32 @@ import { motion } from 'framer-motion'
 import { gsap } from 'gsap'
 import projectData from '../data/projects.json'
 import contentData from '../data/content.json'
-import { FaReact, FaChrome, FaArrowRight } from 'react-icons/fa'
-import { SiNextdotjs, SiVite, SiTailwindcss, SiTypescript, SiFramer, SiThreedotjs, SiPython } from 'react-icons/si'
+import { FaReact, FaArrowRight, FaCode } from 'react-icons/fa'
+import { 
+  SiNextdotjs, SiTailwindcss, SiPython, SiLaravel, SiMariadb,
+  SiFastapi, SiPostgresql, SiPocketbase, SiVuedotjs, SiDotnet,
+  SiMysql, SiFlask
+} from 'react-icons/si'
 
 const iconMap: Record<string, React.ReactNode> = {
   "React": <FaReact />,
+  "React Native": <FaReact />,
   "Next.js": <SiNextdotjs />,
-  "Vite": <SiVite />,
-  "Tailwind": <SiTailwindcss />,
-  "TypeScript": <SiTypescript />,
-  "Framer Motion": <SiFramer />,
-  "Three.js": <SiThreedotjs />,
+  "Tailwind CSS": <SiTailwindcss />,
   "Python": <SiPython />,
+  "Laravel": <SiLaravel />,
+  "MariaDB": <SiMariadb />,
+  "FastAPI": <SiFastapi />,
+  "Ollama": <SiPython />,
+  "PostgreSQL": <SiPostgresql />,
+  "Pocketbase": <SiPocketbase />,
+  "Vue": <SiVuedotjs />,
+  ".NET": <SiDotnet />,
+  "OCP": <SiDotnet />,
+  "CKEditor": <FaCode />,
+  "MySQL": <SiMysql />,
+  "Flask": <SiFlask />,
+  "Metro": <FaReact />,
 }
 
 export default function Projects() {
@@ -119,7 +133,7 @@ export default function Projects() {
                  {project.tech.map((t, i) => (
                    <div key={i} className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full backdrop-blur-md">
                      <span className="text-xl text-zinc-200">
-                       {iconMap[t] || <FaChrome />}
+                       {iconMap[t] || <FaCode />}
                      </span>
                      <span className="text-sm tracking-wide text-zinc-200">{t}</span>
                    </div>
