@@ -4,10 +4,11 @@ import { gsap } from 'gsap'
 import projectData from '../data/projects.json'
 import contentData from '../data/content.json'
 import { FaReact, FaArrowRight, FaCode } from 'react-icons/fa'
+import { HiSpeakerphone } from 'react-icons/hi'
 import { 
   SiNextdotjs, SiTailwindcss, SiPython, SiLaravel, SiMariadb,
   SiFastapi, SiPostgresql, SiPocketbase, SiVuedotjs, SiDotnet,
-  SiMysql, SiFlask
+  SiMysql, SiFlask, SiFirebase
 } from 'react-icons/si'
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -29,6 +30,8 @@ const iconMap: Record<string, React.ReactNode> = {
   "MySQL": <SiMysql />,
   "Flask": <SiFlask />,
   "Metro": <FaReact />,
+  "Insider": <HiSpeakerphone />,
+  "Firebase": <SiFirebase />,
 }
 
 export default function Projects() {

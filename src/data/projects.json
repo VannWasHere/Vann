@@ -8,8 +8,8 @@
             "MariaDB",
             "Tailwind CSS"
         ],
-        "image": "",
-        "link": "",
+        "image": "/lippocms.png",
+        "link": "https://lippomalls.com/",
         "year": "2025",
         "featured": true
     },
@@ -18,7 +18,9 @@
         "description": "Developed mobile UI based on Figma designs for Lippo Mall Indonesia's member application. Created CI/CD pipelines for production deployment.",
         "tech": [
             "React Native",
-            "Metro"
+            "Metro",
+            "Insider",
+            "Firebase"
         ],
         "image": "",
         "link": "",
