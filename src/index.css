@@ -3,8 +3,8 @@
 @theme {
   --color-background: #000;
   --color-foreground: #fff;
-  --color-primary: #3b82f6;
-  --color-accent: #8b5cf6;
+  --color-primary: #ef4444;
+  --color-accent: #dc2626;
 }
 
 @layer base {

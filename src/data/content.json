@@ -7,7 +7,28 @@
     "about": {
         "sectionSubtitle": "[ 01 ] About Me",
         "headline": "Building practical digital solutions with aesthetics and performance.",
-        "description": "I have approximately three years of professional experience in software development and a strong passion for turning real-world problems into practical and impactful digital solutions. I am actively seeking opportunities to further expand my expertise in tech, particularly in software development and artificial intelligence."
+        "description": "I have approximately three years of professional experience in software development and a strong passion for turning real-world problems into practical and impactful digital solutions. I am actively seeking opportunities to further expand my expertise in tech, particularly in software development and artificial intelligence.",
+        "stats": [
+            {
+                "value": "3+",
+                "label": "Years Experience"
+            },
+            {
+                "value": "7+",
+                "label": "Projects Delivered"
+            },
+            {
+                "value": "4",
+                "label": "Tech Stacks"
+            }
+        ],
+        "education": {
+            "campus": "Multimedia Nusantara University",
+            "major": "Information System",
+            "graduated": "Oct 2025",
+            "focus": "Database Administrator & ERP",
+            "story": "It all started with a curiosity for how systems work behind the scenes. At Multimedia Nusantara University, I dove deep into Information Systems — not just writing code, but understanding how data flows through an entire organization. My focus on Database Administration and ERP taught me to think in systems, not just features. From designing normalized schemas to mapping end-to-end business processes, those years shaped me into someone who builds software with structure and purpose."
+        }
     },
     "projectsSection": {
         "sectionSubtitle": "[ 02 ] Selected Works"
@@ -30,7 +51,7 @@
     },
     "footer": {
         "text": "Vann. Designed with aesthetics in mind.",
-        "github": "https://github.com/justinedonovan",
+        "github": "https://github.com/VannWasHere",
         "linkedin": "https://linkedin.com/in/justinedonovan"
     }
 }

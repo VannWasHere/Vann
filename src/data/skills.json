@@ -1,78 +1,38 @@
-[
+{
+  "categories": [
     {
-        "name": "React",
-        "icon": "FaReact"
+      "name": "Frontend",
+      "skills": [
+        { "name": "React", "icon": "FaReact" },
+        { "name": "React Native", "icon": "FaReact" },
+        { "name": "Next.js", "icon": "SiNextdotjs" },
+        { "name": "Angular", "icon": "SiAngular" },
+        { "name": "Vue", "icon": "SiVuedotjs" },
+        { "name": "Tailwind CSS", "icon": "SiTailwindcss" },
+        { "name": "HTML", "icon": "FaHtml5" },
+        { "name": "CSS", "icon": "FaCss3Alt" }
+      ]
     },
     {
-        "name": "React Native",
-        "icon": "FaReact"
+      "name": "Backend",
+      "skills": [
+        { "name": "Node.js", "icon": "FaNodeJs" },
+        { "name": "Python", "icon": "SiPython" },
+        { "name": "FastAPI", "icon": "SiFastapi" },
+        { "name": "Express.js", "icon": "SiExpress" },
+        { "name": "Golang", "icon": "SiGo" },
+        { "name": "Laravel", "icon": "SiLaravel" }
+      ]
     },
     {
-        "name": "Next.js",
-        "icon": "SiNextdotjs"
-    },
-    {
-        "name": "Angular",
-        "icon": "SiAngular"
-    },
-    {
-        "name": "Vue",
-        "icon": "SiVuedotjs"
-    },
-    {
-        "name": "JavaScript",
-        "icon": "SiJavascript"
-    },
-    {
-        "name": "HTML",
-        "icon": "FaHtml5"
-    },
-    {
-        "name": "CSS",
-        "icon": "FaCss3Alt"
-    },
-    {
-        "name": "Tailwind CSS",
-        "icon": "SiTailwindcss"
-    },
-    {
-        "name": "Python",
-        "icon": "SiPython"
-    },
-    {
-        "name": "FastAPI",
-        "icon": "SiFastapi"
-    },
-    {
-        "name": "Express.js",
-        "icon": "SiExpress"
-    },
-    {
-        "name": "Golang",
-        "icon": "SiGo"
-    },
-    {
-        "name": "Laravel",
-        "icon": "SiLaravel"
-    },
-    {
-        "name": "PostgreSQL",
-        "icon": "SiPostgresql"
-    },
-    {
-        "name": "MySQL",
-        "icon": "SiMysql"
-    },
-    {
-        "name": "Git",
-        "icon": "FaGitAlt"
-    },
-    {
-        "name": "Docker",
-        "icon": "FaDocker"
-    },
-    {
-        "name": "Linux",
-        "icon": "FaLinux"
+      "name": "Database & DevOps",
+      "skills": [
+        { "name": "PostgreSQL", "icon": "SiPostgresql" },
+        { "name": "MySQL", "icon": "SiMysql" },
+        { "name": "Git", "icon": "FaGitAlt" },
+        { "name": "Docker", "icon": "FaDocker" },
+        { "name": "Linux", "icon": "FaLinux" }
+      ]
     }
-]
+  ]
+}

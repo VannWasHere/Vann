@@ -13,8 +13,8 @@ export default function Hero() {
   
   // Zoom text aggressively while fading out late
   // Map points non-linearly so it stays small/readable for a while, then explodes outwards at the end:
-  const scaleText = useTransform(scrollYProgress, [0, 0.5, 0.8, 1], [1, 1.8, 10, 150])
-  const opacityText = useTransform(scrollYProgress, [0.7, 1], [1, 0])
+  const scaleText = useTransform(scrollYProgress, [0, 0.4, 0.7, 1], [1, 1.8, 10, 80])
+  const opacityText = useTransform(scrollYProgress, [0.6, 0.9], [1, 0])
   
   // Elements that fade out quickly on early scroll
   const opacityElements = useTransform(scrollYProgress, [0, 0.2], [1, 0])
@@ -33,7 +33,7 @@ export default function Hero() {
   return (
     <section 
       ref={containerRef}
-      className="relative w-full h-[150vh] bg-black text-white"
+      className="relative w-full h-[120vh] bg-black text-white"
     >
       <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden perspective-[1000px]">
         {/* 1. Deep Background Base */}
