@@ -1,28 +1,50 @@
-# Deploys the production site on every push to main/master.
-# Add these GitHub repo secrets (Settings → Secrets and variables → Actions):
-#   VERCEL_TOKEN      — https://vercel.com/account/tokens (create token)
-#   VERCEL_ORG_ID     — from .vercel/project.json → orgId (team_… or user_…)
-#   VERCEL_PROJECT_ID — from .vercel/project.json → projectId (prj_…)
-#
-# If you later connect this repo under Vercel → Project → Settings → Git,
-# turn off one of the two automations so you do not get double deploys.
-
 name: Deploy to Vercel
 
 on:
   push:
-    branches: [main, master]
+    branches: ["**"]
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment info (production)
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Pull Vercel environment info (preview)
+        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
+        run: vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+
+      - name: Build Vercel output
+        run: vercel build --token="$VERCEL_TOKEN"
+
       - name: Deploy to Vercel (production)
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: npx vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+
+      - name: Deploy to Vercel (preview)
+        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
+        run: vercel deploy --prebuilt --token="$VERCEL_TOKEN"

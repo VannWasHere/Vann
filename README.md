@@ -73,3 +73,25 @@ export default defineConfig([
   },
 ])
 ```
+
+## CI/CD to Vercel (Auto Deploy on Push)
+
+This repo includes GitHub Actions workflow at `.github/workflows/deploy-vercel.yml`.
+
+### Behavior
+- Push to `main` or `master`: deploys to Vercel Production.
+- Push to any other branch: deploys a Vercel Preview.
+
+### Required GitHub Secrets
+In GitHub repository settings, add these secrets in **Settings → Secrets and variables → Actions**:
+- `VERCEL_TOKEN` (create at [Vercel Tokens](https://vercel.com/account/tokens))
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+You can get `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` from `.vercel/project.json` after linking the project locally:
+
+```bash
+vercel link
+```
+
+If Vercel Git Integration is also enabled in your Vercel Project settings, disable one side (either Vercel Git Integration or this GitHub Action) to avoid duplicate deployments.
