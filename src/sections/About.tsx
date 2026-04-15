@@ -4,8 +4,6 @@ import { gsap } from 'gsap'
 import { FaGraduationCap, FaDatabase, FaCalendarAlt, FaUniversity } from 'react-icons/fa'
 import contentData from '../data/content.json'
 
-const smoothEase = [0.16, 1, 0.3, 1] as const
-
 const stagger: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
@@ -13,12 +11,12 @@ const stagger: Variants = {
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: smoothEase } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: 'easeOut' } }
 }
 
 const scaleIn: Variants = {
   hidden: { opacity: 0, scale: 0.92 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: smoothEase } }
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: 'easeOut' } }
 }
 
 export default function About() {
