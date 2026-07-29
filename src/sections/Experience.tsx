@@ -9,10 +9,10 @@ export default function Experience() {
 
   useEffect(() => {
     if (!containerRef.current) return
-    const items = gsap.utils.toArray('.exp-item')
+    const items = gsap.utils.toArray<HTMLElement>('.exp-item')
 
     const ctx = gsap.context(() => {
-      items.forEach((item: any) => {
+      items.forEach((item) => {
         gsap.fromTo(item,
           { opacity: 0, x: -40, scale: 0.97 },
           {

@@ -1,145 +1,279 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import {
+  motion,
+  useAnimationFrame,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+  useVelocity,
+} from 'framer-motion'
+import Reveal from '../components/Reveal'
 import contentData from '../data/content.json'
+import { cn } from '../utils'
 
-export default function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  
-  // Tie parallax strictly to framer motion for smoother integration here
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
+const EASE = [0.16, 1, 0.3, 1] as const
+const hero = contentData.hero
+const COPIES = 6
+
+/** Keeps a value looping inside [min, max) so the track never shows a seam. */
+function wrap(min: number, max: number, value: number) {
+  const range = max - min
+  return ((((value - min) % range) + range) % range) + min
+}
+
+/**
+ * One row of kinetic display type. Drifts at `baseVelocity` (negative = left,
+ * positive = right) and speeds up with scroll velocity, so the band reacts to
+ * the reader instead of looping on autopilot.
+ */
+function KineticRow({ word, baseVelocity }: { word: string; baseVelocity: number }) {
+  const reduced = useReducedMotion()
+  const baseX = useMotionValue(0)
+  const { scrollY } = useScroll()
+  const scrollVelocity = useVelocity(scrollY)
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 60, stiffness: 300, mass: 0.6 })
+  // Magnitude only — the row keeps its direction, it just accelerates
+  const velocityBoost = useTransform(smoothVelocity, [-2200, 0, 2200], [2.6, 0, 2.6], {
+    clamp: true,
   })
-  
-  // Zoom text aggressively while fading out late
-  // Map points non-linearly so it stays small/readable for a while, then explodes outwards at the end:
-  const scaleText = useTransform(scrollYProgress, [0, 0.4, 0.7, 1], [1, 1.8, 10, 80])
-  const opacityText = useTransform(scrollYProgress, [0.6, 0.9], [1, 0])
-  
-  // Elements that fade out quickly on early scroll
-  const opacityElements = useTransform(scrollYProgress, [0, 0.2], [1, 0])
-  const blurElements = useTransform(scrollYProgress, [0, 0.2], ["blur(0px)", "blur(10px)"])
+  const x = useTransform(baseX, (v) => `${wrap(-50, 0, v)}%`)
 
-  // Generate particle coordinate maps
-  const particles = Array.from({ length: 40 }).map((_, i) => ({
-    id: i,
-    size: Math.random() * 3 + 1,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    duration: Math.random() * 20 + 10,
-    delay: Math.random() * 5
-  }))
+  useAnimationFrame((_, delta) => {
+    if (reduced) return
+    const boost = 1 + velocityBoost.get()
+    baseX.set(baseX.get() + (baseVelocity * boost * delta) / 1000)
+  })
+
+  const half = Array.from({ length: COPIES })
 
   return (
-    <section 
-      ref={containerRef}
-      className="relative w-full h-[120vh] bg-black text-white"
+    <motion.div
+      style={reduced ? undefined : { x }}
+      className="flex w-max flex-nowrap will-change-transform"
     >
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden perspective-[1000px]">
-        {/* 1. Deep Background Base */}
-        <div className="absolute inset-0 bg-[#0a0000] z-0" />
-
-        {/* 2. Abstract Red Blobs / Nebula */}
-        <motion.div 
-          className="absolute inset-0 w-full h-full z-0 overflow-hidden mix-blend-screen opacity-50 pointer-events-none"
-          style={{ opacity: opacityElements }}
-        >
-          <motion.div 
-            className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-red-600/30 rounded-full blur-[120px]"
-            animate={{ x: ["-10%", "10%", "-10%"], y: ["-10%", "10%", "-10%"], scale: [1, 1.2, 1] }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div 
-            className="absolute top-1/2 right-1/4 w-[40vw] h-[40vw] bg-red-800/20 rounded-full blur-[100px]"
-            animate={{ x: ["10%", "-10%", "10%"], y: ["10%", "-20%", "10%"], scale: [1, 1.3, 1] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          />
-        </motion.div>
-
-        {/* 3. Immersive 3D Grid floor */}
-        <motion.div className="absolute bottom-0 left-0 right-0 h-[60%] z-[1] select-none pointer-events-none"
-             style={{
-               opacity: opacityElements,
-               background: 'linear-gradient(transparent 0%, rgba(220,38,38,0.05) 100%)',
-               transform: 'perspective(500px) rotateX(75deg) scale(2) translateY(50px)',
-               backgroundImage: `
-                 linear-gradient(to right, rgba(239,68,68,0.05) 1px, transparent 1px),
-                 linear-gradient(to bottom, rgba(239,68,68,0.05) 1px, transparent 1px)
-               `,
-               backgroundSize: '40px 40px'
-             }}
-        />
-        
-        {/* 4. Vignette Overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_100%)] opacity-80 z-[2] pointer-events-none" />
-
-        {/* 5. Floating Ambient Particles */}
-        <motion.div className="absolute inset-0 z-[3] overflow-hidden pointer-events-none" style={{ opacity: opacityElements }}>
-          {particles.map((p) => (
-            <motion.div
-              key={p.id}
-              className="absolute bg-white rounded-full opacity-0"
-              style={{ 
-                width: p.size, height: p.size, 
-                left: `${p.x}%`, top: `${p.y}%`,
-                boxShadow: '0 0 10px 2px rgba(239,68,68,0.2)' 
-              }}
-              animate={{ 
-                y: ["0vh", "-100vh"], 
-                opacity: [0, 0.8, 0],
-                x: ["0vw", "5vw", "-5vw"]
-              }}
-              transition={{
-                y: { duration: p.duration, repeat: Infinity, ease: "linear", delay: p.delay },
-                opacity: { duration: p.duration, repeat: Infinity, ease: "easeInOut", delay: p.delay },
-                x: { duration: p.duration * 0.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }
-              }}
-            />
+      {[0, 1].map((copy) => (
+        <div key={copy} className="flex flex-nowrap" aria-hidden={copy === 1}>
+          {half.map((_, i) => (
+            <span key={i} className="flex items-center">
+              <span className={cn('inline-block', i % 2 === 0 ? 'word-solid' : 'word-outline')}>
+                {word}
+              </span>
+              <span className="mx-[0.18em] text-[0.16em] align-middle text-red-500/80">✳</span>
+            </span>
           ))}
-        </motion.div>
+        </div>
+      ))}
+    </motion.div>
+  )
+}
 
-        {/* Hero Typography - Zoom mask target */}
-        <motion.div 
-          className="relative z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center select-none will-change-transform"
-          style={{ scale: scaleText, opacity: opacityText }}
-        >
-          {/* Main Name Zooming Core */}
-          <h1 className="text-7xl md:text-9xl lg:text-[200px] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-red-100 to-red-600 pb-4 isolate transform-gpu">
-            {contentData.hero.title.toUpperCase()}
-          </h1>
-        </motion.div>
-        
-        {/* Subtitle that fades quickly */}
-        <motion.div
-           className="absolute top-[60%] flex flex-col items-center w-full z-10 pointer-events-none"
-           style={{ opacity: opacityElements, filter: blurElements }}
-        >
-          <div className="h-[1px] w-0 bg-red-500/50 mx-auto mb-8 shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-          <p 
-            className="text-xl md:text-3xl text-zinc-300 font-light tracking-[0.2em] max-w-3xl mx-auto uppercase mt-4 text-center px-4" 
-            dangerouslySetInnerHTML={{ __html: contentData.hero.subtitle.replace('Problem Solver', '<span class="text-white font-medium italic filter drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">Problem Solver</span>') }} 
-          />
-        </motion.div>
+function formatTime(timeZone: string) {
+  try {
+    return new Intl.DateTimeFormat('en-GB', {
+      timeZone,
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date())
+  } catch {
+    return ''
+  }
+}
 
-        {/* Scroll Indicator */}
-        <motion.div 
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3"
-          style={{ opacity: opacityElements }}
+/** Live local time — small human detail instead of a decorative widget. */
+function useLocalTime(timeZone: string) {
+  const [time, setTime] = useState(() => formatTime(timeZone))
+
+  useEffect(() => {
+    const id = setInterval(() => setTime(formatTime(timeZone)), 15_000)
+    return () => clearInterval(id)
+  }, [timeZone])
+
+  return time
+}
+
+export default function Hero() {
+  const reduced = useReducedMotion()
+  const time = useLocalTime(hero.timezone)
+  const { scrollY } = useScroll()
+  const scrollVelocity = useVelocity(scrollY)
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 60, stiffness: 300, mass: 0.6 })
+
+  // The whole band leans into the scroll direction — subtle, never gimmicky
+  const skewX = useTransform(smoothVelocity, [-3000, 0, 3000], [-2.5, 0, 2.5], { clamp: true })
+
+  // Restrained parallax: content drifts up and dims as the next section covers it
+  const y = useTransform(scrollY, [0, 900], ['0%', '-12%'])
+  const opacity = useTransform(scrollY, [0, 620], [1, 0.12])
+
+  const edgeFade =
+    'linear-gradient(to right, transparent 0%, #000 7%, #000 93%, transparent 100%)'
+
+  return (
+    <section
+      id="hero"
+      className="sticky top-0 h-[100svh] min-h-[600px] w-full overflow-hidden bg-[#080808] text-white"
+    >
+      {/* Column guides — structure you can feel, not decoration you notice */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 hidden grid-cols-4 md:grid">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="border-l border-white/[0.04]" />
+        ))}
+      </div>
+
+      {/* Film grain */}
+      <div
+        aria-hidden
+        className="grain pointer-events-none absolute inset-0 z-[2] overflow-hidden mix-blend-soft-light"
+      />
+
+      <div className="relative z-10 flex h-full flex-col">
+        {/* ── Masthead ─────────────────────────────────────────── */}
+        <motion.header
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.15, ease: 'easeOut' }}
+          className="flex shrink-0 items-center justify-between gap-4 border-b border-white/10 px-5 py-4 font-mono text-[10px] tracking-[0.18em] uppercase text-zinc-500 md:px-10 md:text-[11px]"
         >
-          <span className="text-[11px] tracking-[0.3em] font-mono uppercase text-zinc-400 font-semibold mb-2 opacity-70">
-            {contentData.hero.scrollText}
+          <span className="truncate text-zinc-300">
+            {hero.name}
+            <span className="mx-1.5 text-red-500">/</span>
+            <span className="text-zinc-500">{hero.alias}</span>
           </span>
+
+          <span className="hidden md:block">{hero.role}</span>
+
+          <span className="flex shrink-0 items-center gap-2.5">
+            <span className="hidden sm:inline">{hero.location}</span>
+            <span className="hidden text-zinc-700 sm:inline">—</span>
+            <span className="tabular-nums text-zinc-300">{time || '--:--'}</span>
+          </span>
+        </motion.header>
+
+        <motion.main
+          style={reduced ? undefined : { y, opacity }}
+          className="flex flex-1 flex-col justify-center gap-8 py-6 md:gap-12 md:py-10"
+        >
+          {/* ── Kinetic type band ──────────────────────────────── */}
           <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-10 h-16 rounded-full border border-zinc-600/50 flex justify-center p-2 backdrop-blur-sm bg-black/20"
+            style={reduced ? undefined : { skewX }}
+            className="relative select-none"
           >
-            <motion.div 
-              animate={{ y: [0, 16, 0], opacity: [1, 0, 1] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,1)]"
-            />
+            <div
+              className="font-display text-[clamp(2.9rem,10.5vw,9rem)] leading-[0.9] font-extrabold tracking-[-0.04em] uppercase"
+              style={{ maskImage: edgeFade, WebkitMaskImage: edgeFade }}
+            >
+              <motion.div
+                initial={reduced ? { opacity: 0 } : { y: '110%' }}
+                animate={reduced ? { opacity: 1 } : { y: '0%' }}
+                transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
+                className="overflow-hidden"
+              >
+                <KineticRow word={hero.lineOne} baseVelocity={-2.2} />
+              </motion.div>
+
+              <motion.div
+                initial={reduced ? { opacity: 0 } : { y: '110%' }}
+                animate={reduced ? { opacity: 1 } : { y: '0%' }}
+                transition={{ duration: 1.2, delay: 0.34, ease: EASE }}
+                className="overflow-hidden text-zinc-100"
+              >
+                <KineticRow word={hero.lineTwo} baseVelocity={1.6} />
+              </motion.div>
+            </div>
           </motion.div>
+
+          {/* ── Meta ───────────────────────────────────────────── */}
+          <div className="px-5 md:px-10">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-4 border-b border-white/10 pb-5 md:pb-6">
+              <Reveal delay={0.55}>
+                <p className="font-editorial text-[clamp(1.25rem,2.8vw,2.1rem)] leading-none text-zinc-400 italic">
+                  <span className="mr-3 align-middle text-xs text-red-500 not-italic">✳</span>
+                  {hero.accent}
+                </p>
+              </Reveal>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="flex items-center gap-2.5 font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-400"
+              >
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-500" />
+                </span>
+                {hero.status}
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.7, ease: EASE }}
+              className="grid gap-6 pt-5 md:grid-cols-12 md:gap-10 md:pt-6"
+            >
+              <p className="max-w-xl text-sm leading-relaxed font-light text-zinc-400 md:col-span-7 md:text-base">
+                {hero.intro}
+              </p>
+
+              <div className="flex flex-wrap items-start gap-3 md:col-span-5 md:justify-end">
+                <a
+                  href="#projects"
+                  className="group inline-flex items-center gap-3 bg-white px-5 py-3 font-mono text-[11px] tracking-[0.18em] uppercase text-black transition-colors duration-300 hover:bg-red-500 hover:text-white"
+                >
+                  {hero.primaryCta}
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </a>
+                <a
+                  href="#contact"
+                  className="inline-flex items-center border border-white/15 px-5 py-3 font-mono text-[11px] tracking-[0.18em] uppercase text-zinc-400 transition-colors duration-300 hover:border-white/40 hover:text-white"
+                >
+                  {hero.secondaryCta}
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </motion.main>
+
+        {/* ── Footer bar ───────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.95 }}
+          className="flex shrink-0 items-stretch border-t border-white/10"
+        >
+          <div className="flex min-w-0 flex-1 items-center gap-5 overflow-hidden px-5 py-3 md:px-10">
+            <span className="hidden shrink-0 font-mono text-[10px] tracking-[0.22em] uppercase text-zinc-600 lg:inline">
+              Built for
+            </span>
+            <ul className="flex min-w-0 items-center gap-5 overflow-hidden">
+              {hero.industries.map((item) => (
+                <li
+                  key={item}
+                  className="font-mono text-[10px] tracking-[0.2em] whitespace-nowrap uppercase text-zinc-500"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="hidden shrink-0 items-center gap-3 border-l border-white/10 px-5 md:flex">
+            <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-zinc-500">
+              {hero.scrollText}
+            </span>
+            <motion.span
+              animate={reduced ? undefined : { y: [-3, 3, -3] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="text-xs text-red-500"
+            >
+              &darr;
+            </motion.span>
+          </div>
         </motion.div>
       </div>
     </section>

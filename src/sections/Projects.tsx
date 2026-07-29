@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { gsap } from 'gsap'
+import ProjectImage from '../components/ProjectImage'
 import projectData from '../data/projects.json'
 import contentData from '../data/content.json'
 import { FaReact, FaArrowRight, FaCode } from 'react-icons/fa'
@@ -39,7 +41,7 @@ export default function Projects() {
   
   useEffect(() => {
     if (!containerRef.current) return
-    const panels = gsap.utils.toArray('.project-panel')
+    const panels = gsap.utils.toArray<HTMLElement>('.project-panel')
     
     const ctx = gsap.context(() => {
       const horizontalAnimation = gsap.to(panels, {
@@ -53,7 +55,7 @@ export default function Projects() {
         }
       })
       
-      panels.forEach((panel: any) => {
+      panels.forEach((panel) => {
         const img = panel.querySelector('.project-img');
         if (img) {
           gsap.fromTo(img, 
@@ -99,36 +101,37 @@ export default function Projects() {
         >
           {/* Background image container */}
           <div className="absolute inset-0 overflow-hidden opacity-30 z-0">
-             {project.image ? (
-               <img 
-                 src={project.image} 
-                 alt={`${project.title} Background`} 
-                 className="project-img w-full h-full object-cover blur-sm"
-               />
-             ) : (
-               <div className="project-img w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-950" aria-hidden />
-             )}
+             <ProjectImage
+               src={project.image}
+               alt={`${project.title} background`}
+               title={project.title}
+               className="project-img w-full h-full object-cover blur-sm"
+             />
              <div className="absolute inset-0 bg-black/60 mix-blend-multiply" />
           </div>
 
           <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 w-full relative group">
                <div className="overflow-hidden rounded-xl border border-white/10 shadow-2xl">
-                 {project.image ? (
-                   <img 
-                     src={project.image} 
-                     alt={project.title}
-                     className="w-full h-[40vh] md:h-[60vh] object-cover transition-transform duration-700 group-hover:scale-105"
-                   />
-                 ) : (
-                   <div className="w-full h-[40vh] md:h-[60vh] bg-gradient-to-br from-zinc-800 to-zinc-950" aria-hidden />
-                 )}
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+                 <ProjectImage
+                   src={project.image}
+                   alt={project.title}
+                   title={project.title}
+                   className="w-full h-[40vh] md:h-[60vh] object-cover transition-transform duration-700 group-hover:scale-105"
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 pointer-events-none" />
                </div>
             </div>
 
             <div className="flex-1 flex flex-col gap-6">
-               <div className="text-zinc-400 font-mono text-xl">{project.year}</div>
+               <div className="flex items-center gap-4 flex-wrap">
+                 <span className="text-zinc-400 font-mono text-xl">{project.year}</span>
+                 {project.label && (
+                   <span className="px-3 py-1 rounded-full border border-red-500/30 bg-red-500/10 text-red-300 font-mono text-[10px] tracking-[0.2em] uppercase">
+                     {project.label}
+                   </span>
+                 )}
+               </div>
                <h3 className="text-5xl md:text-7xl font-bold tracking-tight">{project.title}</h3>
                <motion.div 
                  initial={{ opacity: 0, y: 30 }}
@@ -151,16 +154,23 @@ export default function Projects() {
                  ))}
                </div>
 
-               <motion.a 
-                 href={project.link} 
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 whileHover={{ x: 10 }}
-                 className="mt-8 text-xl font-medium inline-flex items-center gap-4 text-red-400 hover:text-red-300 w-fit"
-               >
-                 View Project 
-                 <span className="h-0.5 w-12 bg-current block" />
-               </motion.a>
+               {project.link ? (
+                 <motion.a
+                   href={project.link}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   whileHover={{ x: 10 }}
+                   className="mt-8 text-xl font-medium inline-flex items-center gap-4 text-red-400 hover:text-red-300 w-fit"
+                 >
+                   View Project
+                   <span className="h-0.5 w-12 bg-current block" />
+                 </motion.a>
+               ) : (
+                 <span className="mt-8 font-mono text-xs tracking-[0.2em] uppercase text-zinc-500 inline-flex items-center gap-4 w-fit">
+                   Private build — walkthrough on request
+                   <span className="h-px w-12 bg-zinc-700 block" />
+                 </span>
+               )}
             </div>
           </div>
         </div>
@@ -168,9 +178,9 @@ export default function Projects() {
       
       {/* View All Projects Extra Slide */}
       <div className="project-panel relative w-screen h-screen flex-shrink-0 flex items-center justify-center bg-zinc-950 p-8">
-        <motion.a 
-          href="/projects" 
-          whileHover={{ scale: 1.05 }}
+        <motion.div whileHover={{ scale: 1.05 }} className="w-fit">
+        <Link
+          to="/projects"
           className="group flex flex-col items-center gap-6"
         >
           <div className="w-32 h-32 rounded-full border border-zinc-700 group-hover:border-red-500 flex items-center justify-center transition-colors shadow-2xl group-hover:shadow-[0_0_30px_rgba(239,68,68,0.3)]">
@@ -182,7 +192,8 @@ export default function Projects() {
           <p className="text-zinc-500 uppercase tracking-widest font-mono text-sm max-w-sm text-center">
             Discover the full archive of modern web applications and components.
           </p>
-        </motion.a>
+        </Link>
+        </motion.div>
       </div>
     </section>
   )

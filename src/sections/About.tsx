@@ -1,194 +1,235 @@
-import { useEffect, useRef } from 'react'
-import { motion, type Variants } from 'framer-motion'
-import { gsap } from 'gsap'
-import { FaGraduationCap, FaDatabase, FaCalendarAlt, FaUniversity } from 'react-icons/fa'
+import { useEffect, useRef, useState } from 'react'
+import { animate, motion, useInView, useReducedMotion } from 'framer-motion'
+import Reveal from '../components/Reveal'
 import contentData from '../data/content.json'
+import { cn } from '../utils'
 
-const stagger: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } }
+const EASE = [0.16, 1, 0.3, 1] as const
+const about = contentData.about
+
+const headlineStyles: Record<string, string> = {
+  solid: 'font-display font-semibold text-[#0d0d0d]',
+  serif: 'font-editorial italic text-red-600',
+  muted: 'font-display font-semibold text-[#0d0d0d]/30',
 }
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: 'easeOut' } }
-}
+/** Counts up once the strip scrolls into view. */
+function StatValue({ value }: { value: string }) {
+  const match = value.match(/^(\d+)(.*)$/)
+  const target = match ? Number.parseInt(match[1], 10) : 0
+  const suffix = match ? match[2] : value
 
-const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: 'easeOut' } }
-}
-
-export default function About() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const textRef = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-12%' })
+  const reduced = useReducedMotion()
+  const [display, setDisplay] = useState(0)
 
   useEffect(() => {
-    if (!sectionRef.current || !textRef.current) return
-    const ctx = gsap.context(() => {
-      gsap.fromTo(textRef.current,
-        { y: 80, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 75%",
-            end: "top 30%",
-            scrub: 1,
-          }
-        }
-      )
+    if (!inView) return
+    const controls = animate(0, target, {
+      duration: reduced ? 0 : 1.3,
+      ease: EASE,
+      onUpdate: (v) => setDisplay(Math.round(v)),
     })
-    return () => ctx.revert()
-  }, [])
-
-  const edu = contentData.about.education
-  const stats = contentData.about.stats
+    return () => controls.stop()
+  }, [inView, target, reduced])
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen py-20 md:py-28 flex items-center overflow-hidden bg-zinc-950 px-6 md:px-12 lg:px-24"
-    >
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-zinc-950 to-zinc-900 pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-red-500/[0.03] rounded-full blur-[150px] pointer-events-none" />
-
-      <div ref={textRef} className="relative z-10 w-full max-w-6xl mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={stagger}
-        >
-          <motion.h2
-            className="text-zinc-500 font-mono tracking-widest uppercase text-sm mb-6"
-            variants={fadeUp}
-          >
-            {contentData.about.sectionSubtitle}
-          </motion.h2>
-
-          <motion.p
-            className="text-3xl md:text-5xl lg:text-6xl text-white font-medium leading-tight tracking-tight max-w-4xl"
-            variants={fadeUp}
-            dangerouslySetInnerHTML={{
-              __html: contentData.about.headline
-                .replace('aesthetics', '<span class="text-zinc-500 italic">aesthetics</span>')
-                .replace('performance', '<span class="text-red-500">performance</span>')
-            }}
-          />
-
-          <motion.p
-            className="mt-8 text-lg md:text-2xl text-zinc-400 font-light max-w-3xl leading-relaxed"
-            variants={fadeUp}
-          >
-            {contentData.about.description}
-          </motion.p>
-
-          {/* Stats Row */}
-          <motion.div
-            className="mt-14 grid grid-cols-3 gap-4 md:gap-6 max-w-xl"
-            variants={fadeUp}
-          >
-            {stats.map((stat, i) => (
-              <motion.div
-                key={i}
-                className="relative group text-center md:text-left p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-red-500/30 transition-colors duration-500"
-                whileHover={{ y: -3 }}
-              >
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative">
-                  <div className="text-3xl md:text-4xl font-bold text-white tracking-tight">{stat.value}</div>
-                  <div className="text-xs md:text-sm text-zinc-500 font-mono tracking-wider uppercase mt-1">{stat.label}</div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Education Bento Card */}
-          <motion.div
-            className="mt-20"
-            variants={scaleIn}
-          >
-            <div className="relative rounded-3xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 via-zinc-900/50 to-black/80 backdrop-blur-xl overflow-hidden">
-              <div className="absolute top-0 right-0 w-72 h-72 bg-red-500/[0.04] rounded-full blur-[100px] pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-56 h-56 bg-red-500/[0.03] rounded-full blur-[80px] pointer-events-none" />
-
-              <div className="relative p-8 md:p-12">
-                {/* Card Header */}
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                    <FaGraduationCap className="text-red-400 text-lg" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-lg">Academic Background</h3>
-                    <p className="text-zinc-500 text-xs font-mono tracking-wider uppercase">Where It All Started</p>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-10 md:gap-16">
-                  {/* Story Side */}
-                  <div className="space-y-6">
-                    <p className="text-zinc-300 text-base md:text-lg leading-relaxed font-light">
-                      {edu.story}
-                    </p>
-                  </div>
-
-                  {/* Details Side */}
-                  <div className="space-y-5">
-                    <div className="grid grid-cols-1 gap-4">
-                      <DetailRow
-                        icon={<FaUniversity />}
-                        label="Campus"
-                        value={edu.campus}
-                      />
-                      <DetailRow
-                        icon={<FaGraduationCap />}
-                        label="Major"
-                        value={edu.major}
-                      />
-                      <DetailRow
-                        icon={<FaDatabase />}
-                        label="Focus"
-                        value={edu.focus}
-                      />
-                      <DetailRow
-                        icon={<FaCalendarAlt />}
-                        label="Graduated"
-                        value={edu.graduated}
-                      />
-                    </div>
-
-                    {/* Focus Tags */}
-                    <div className="flex flex-wrap gap-2 pt-3">
-                      {['Database Design', 'ERP Systems', 'System Analysis', 'Data Modeling'].map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-3 py-1.5 text-xs font-mono tracking-wide text-red-300/80 bg-red-500/[0.08] border border-red-500/15 rounded-full"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      </div>
-    </section>
+    <span ref={ref} className="tabular-nums">
+      {match ? display : ''}
+      {suffix}
+    </span>
   )
 }
 
-function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-white/[0.08] transition-colors">
-      <div className="text-red-400/70 text-sm mt-0.5 shrink-0">{icon}</div>
-      <div className="min-w-0">
-        <div className="text-[10px] text-zinc-600 font-mono tracking-widest uppercase">{label}</div>
-        <div className="text-zinc-200 text-sm font-medium mt-0.5">{value}</div>
+    <div className="bg-[#f1efea] px-5 py-6 md:px-6 md:py-7">
+      <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#0d0d0d]/40">
+        {label}
+      </div>
+      <div className="mt-2 text-sm leading-snug font-medium text-[#0d0d0d] md:text-base">
+        {value}
       </div>
     </div>
+  )
+}
+
+export default function About() {
+  const edu = about.education
+  const now = about.now
+
+  return (
+    <section
+      id="about"
+      className="relative z-10 overflow-hidden bg-[#f1efea] px-6 py-24 text-[#0d0d0d] md:px-12 md:py-32 lg:px-20"
+    >
+      {/* Paper texture — keeps the flat light panel from feeling like a blank div */}
+      <div
+        aria-hidden
+        className="grain pointer-events-none absolute inset-0 overflow-hidden opacity-70 mix-blend-multiply"
+      />
+
+      <div className="relative mx-auto max-w-7xl">
+        {/* ── Section head ─────────────────────────────────────── */}
+        <div className="flex items-baseline justify-between gap-6 border-b border-[#0d0d0d]/15 pb-5">
+          <div className="flex items-baseline gap-4 font-mono text-[10px] tracking-[0.22em] uppercase md:text-[11px]">
+            <span className="text-red-600">{about.sectionIndex}</span>
+            <span className="text-[#0d0d0d]/60">{about.sectionTitle}</span>
+          </div>
+          <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#0d0d0d]/40">
+            {contentData.hero.location}
+          </span>
+        </div>
+
+        {/* ── Statement ────────────────────────────────────────── */}
+        <div className="pt-12 md:pt-16">
+          <h2 className="max-w-5xl text-[clamp(2rem,6vw,5rem)] leading-[1.04] tracking-[-0.03em] text-[#0d0d0d]">
+            {about.headline.map((line, i) => (
+              <Reveal key={i} onScroll delay={i * 0.12} className="block">
+                <span className={cn('block', headlineStyles[line.style])}>{line.text}</span>
+              </Reveal>
+            ))}
+          </h2>
+        </div>
+
+        {/* ── Copy + current role ──────────────────────────────── */}
+        <div className="grid gap-12 pt-16 md:grid-cols-12 md:gap-16 md:pt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-12%' }}
+            transition={{ duration: 0.9, ease: EASE }}
+            className="space-y-6 md:col-span-7"
+          >
+            <p className="text-lg leading-relaxed text-[#0d0d0d] md:text-2xl md:leading-relaxed">
+              {about.lead}
+            </p>
+            <p className="max-w-2xl text-base leading-relaxed text-[#0d0d0d]/60 md:text-lg">
+              {about.body}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-12%' }}
+            transition={{ duration: 0.9, delay: 0.12, ease: EASE }}
+            className="md:col-span-5 md:pl-10 lg:border-l lg:border-[#0d0d0d]/15"
+          >
+            <div className="flex items-center gap-2.5 font-mono text-[10px] tracking-[0.2em] uppercase text-[#0d0d0d]/50">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-600 opacity-70" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-600" />
+              </span>
+              {now.label}
+            </div>
+
+            <h3 className="font-display mt-5 text-2xl leading-tight font-semibold tracking-tight md:text-3xl">
+              {now.role}
+            </h3>
+
+            <div className="mt-6 space-y-0 border-t border-[#0d0d0d]/15">
+              {[
+                { label: 'Company', value: now.company },
+                { label: 'Tenure', value: now.since },
+                { label: 'Base', value: now.location },
+              ].map((row) => (
+                <div
+                  key={row.label}
+                  className="flex items-baseline justify-between gap-6 border-b border-[#0d0d0d]/15 py-3.5 transition-colors hover:border-[#0d0d0d]/40"
+                >
+                  <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-[#0d0d0d]/40">
+                    {row.label}
+                  </span>
+                  <span className="text-right text-sm font-medium">{row.value}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+
+        {/* ── Principles ───────────────────────────────────────── */}
+        <div className="pt-20 md:pt-28">
+          <div className="mb-8 font-mono text-[10px] tracking-[0.22em] uppercase text-[#0d0d0d]/40">
+            {about.principlesLabel}
+          </div>
+
+          <div className="border-b border-[#0d0d0d]/15">
+            {about.principles.map((item, i) => (
+              <motion.div
+                key={item.index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-10%' }}
+                transition={{ duration: 0.8, delay: i * 0.08, ease: EASE }}
+                className="group relative grid gap-3 border-t border-[#0d0d0d]/15 py-7 md:grid-cols-12 md:gap-8 md:py-9"
+              >
+                {/* Hairline that draws itself on hover */}
+                <span
+                  aria-hidden
+                  className="absolute bottom-0 left-0 h-px w-0 bg-red-600 transition-all duration-700 ease-out group-hover:w-full"
+                />
+
+                <span className="font-mono text-[11px] text-red-600 md:col-span-1">
+                  {item.index}
+                </span>
+
+                <h3 className="font-display text-xl font-medium tracking-tight transition-transform duration-500 ease-out group-hover:translate-x-1.5 md:col-span-4 md:text-2xl">
+                  {item.title}
+                </h3>
+
+                <p className="max-w-2xl text-sm leading-relaxed text-[#0d0d0d]/55 md:col-span-7 md:text-base">
+                  {item.body}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Stats ────────────────────────────────────────────── */}
+        <div className="mt-20 grid grid-cols-2 gap-px border border-[#0d0d0d]/15 bg-[#0d0d0d]/15 md:mt-28 md:grid-cols-4">
+          {about.stats.map((stat) => (
+            <div key={stat.label} className="bg-[#f1efea] px-5 py-8 md:px-8 md:py-10">
+              <div className="font-display text-4xl font-semibold tracking-tight md:text-6xl">
+                <StatValue value={stat.value} />
+              </div>
+              <div className="mt-2 font-mono text-[10px] tracking-[0.18em] uppercase text-[#0d0d0d]/45">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Education record ─────────────────────────────────── */}
+        <div className="grid gap-10 pt-20 md:grid-cols-12 md:gap-16 md:pt-28">
+          <div className="md:col-span-5">
+            <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#0d0d0d]/40">
+              {edu.label}
+            </div>
+            <p className="font-editorial mt-5 text-2xl leading-snug text-[#0d0d0d]/80 italic md:text-3xl">
+              {edu.story}
+            </p>
+            <div className="mt-7 flex flex-wrap gap-2">
+              {edu.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-[#0d0d0d]/20 px-3 py-1.5 font-mono text-[10px] tracking-[0.12em] uppercase text-[#0d0d0d]/60 transition-colors hover:border-red-600/50 hover:text-red-600"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-px self-start border border-[#0d0d0d]/15 bg-[#0d0d0d]/15 md:col-span-7">
+            <Field label="University" value={edu.campus} />
+            <Field label="Major" value={edu.major} />
+            <Field label="Focus" value={edu.focus} />
+            <Field label="Graduated" value={edu.graduated} />
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }

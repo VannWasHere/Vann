@@ -17,7 +17,7 @@ export default function Contact() {
   }
 
   return (
-    <section className="relative min-h-screen py-32 bg-black text-white flex items-center justify-center px-6 md:px-12 overflow-hidden">
+    <section id="contact" className="relative min-h-screen py-32 bg-black text-white flex items-center justify-center px-6 md:px-12 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-black to-black pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-500/[0.04] rounded-full blur-[200px] pointer-events-none" />
 

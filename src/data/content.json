@@ -1,33 +1,101 @@
 {
     "hero": {
-        "title": "Vann",
-        "subtitle": "Software Engineer & AI Enthusiast",
+        "name": "Justine Donovan",
+        "alias": "Vann",
+        "role": "Fullstack Engineer",
+        "location": "Jakarta, ID",
+        "timezone": "Asia/Jakarta",
+        "status": "Open for work",
+        "lineOne": "Software",
+        "lineTwo": "Engineer",
+        "accent": "with a soft spot for AI",
+        "intro": "Three years of shipping web apps, internal systems, and AI features that make it past the demo stage. Based in Jakarta, usually mid-refactor.",
+        "primaryCta": "Selected work",
+        "secondaryCta": "Get in touch",
+        "industries": [
+            "Retail & Malls",
+            "Banking",
+            "Telco",
+            "HR Tech",
+            "Enterprise IT"
+        ],
         "scrollText": "Scroll"
     },
     "about": {
-        "sectionSubtitle": "[ 01 ] About Me",
-        "headline": "Building practical digital solutions with aesthetics and performance.",
-        "description": "I have approximately three years of professional experience in software development and a strong passion for turning real-world problems into practical and impactful digital solutions. I am actively seeking opportunities to further expand my expertise in tech, particularly in software development and artificial intelligence.",
+        "sectionIndex": "01",
+        "sectionTitle": "About",
+        "headline": [
+            {
+                "text": "I build the",
+                "style": "solid"
+            },
+            {
+                "text": "unglamorous systems",
+                "style": "serif"
+            },
+            {
+                "text": "companies actually run on.",
+                "style": "muted"
+            }
+        ],
+        "lead": "Malls, banks, and HR teams — most of what I've built lives behind a login screen. Three years in, the interesting part is rarely the framework. It's working out how a business actually runs, then making the software agree with it.",
+        "body": "I came in through the data side — schemas, ERP flows, migrations — which is why I still design the database before I design the screen. Then AI got its hooks in me. Now a good chunk of my work is CV screening, OCR pipelines, and the parts of a workflow nobody should be doing by hand.",
+        "now": {
+            "label": "Currently",
+            "role": "Fullstack Developer & Solution Expert",
+            "company": "Infracom Technology",
+            "since": "Since Jan 2024",
+            "location": "Jakarta, Indonesia — open to remote"
+        },
+        "principlesLabel": "How I work",
+        "principles": [
+            {
+                "index": "01",
+                "title": "Model the data first",
+                "body": "Schemas outlive interfaces. Get the relationships right and features stop fighting each other six months in."
+            },
+            {
+                "index": "02",
+                "title": "Ship it, then polish",
+                "body": "A staging environment nobody uses proves nothing. Put it in front of real users early and let their habits shape the next iteration."
+            },
+            {
+                "index": "03",
+                "title": "Automate the tedious parts",
+                "body": "Screening, OCR, reporting — if someone is copy-pasting between tabs, that's a feature waiting to be built."
+            }
+        ],
         "stats": [
             {
                 "value": "3+",
-                "label": "Years Experience"
+                "label": "Years building"
             },
             {
-                "value": "7+",
-                "label": "Projects Delivered"
+                "value": "8+",
+                "label": "Projects shipped"
+            },
+            {
+                "value": "5",
+                "label": "Industries served"
             },
             {
                 "value": "4",
-                "label": "Tech Stacks"
+                "label": "Core stacks"
             }
         ],
         "education": {
+            "label": "Education",
             "campus": "Multimedia Nusantara University",
             "major": "Information System",
             "graduated": "Oct 2025",
-            "focus": "Database Administrator & ERP",
-            "story": "It all started with a curiosity for how systems work behind the scenes. At Multimedia Nusantara University, I dove deep into Information Systems — not just writing code, but understanding how data flows through an entire organization. My focus on Database Administration and ERP taught me to think in systems, not just features. From designing normalized schemas to mapping end-to-end business processes, those years shaped me into someone who builds software with structure and purpose."
+            "focus": "Artificial Intelligence",
+            "story": "Information Systems turned out to be the right accident. I spent those years tracing how data moves through a company — schemas, ERP flows, the messy handoffs nobody documents — and somewhere in the middle of it, fell for AI.",
+            "tags": [
+                "Machine Learning",
+                "Deep Learning",
+                "Data Modeling",
+                "System Analysis"
+            ]
         }
     },
     "projectsSection": {
