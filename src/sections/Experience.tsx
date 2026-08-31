@@ -3,13 +3,23 @@ import { motion } from 'framer-motion'
 import { gsap } from 'gsap'
 import experienceData from '../data/experience.json'
 import contentData from '../data/content.json'
+import { useTheme } from '../theme/themeContext'
 
 export default function Experience() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const { theme } = useTheme()
 
   useEffect(() => {
     if (!containerRef.current) return
     const items = gsap.utils.toArray<HTMLElement>('.exp-item')
+
+    // Timeline colours come from the theme so the dots follow the palette
+    const styles = getComputedStyle(document.documentElement)
+    const readVar = (name: string, fallback: string) =>
+      styles.getPropertyValue(name).trim() || fallback
+    const accent = readVar('--js-accent', '#ef4444')
+    const dotIdle = readVar('--js-dot-idle', '#18181b')
+    const dotBorder = readVar('--js-dot-border', '#3f3f46')
 
     const ctx = gsap.context(() => {
       items.forEach((item) => {
@@ -32,11 +42,11 @@ export default function Experience() {
         const dot = item.querySelector('.timeline-dot')
         if (dot) {
           gsap.fromTo(dot,
-            { backgroundColor: "#18181b", borderColor: "#3f3f46", boxShadow: "none" },
+            { backgroundColor: dotIdle, borderColor: dotBorder, boxShadow: "none" },
             {
-              backgroundColor: "#ef4444",
-              borderColor: "#ef4444",
-              boxShadow: "0 0 20px rgba(239,68,68,0.6)",
+              backgroundColor: accent,
+              borderColor: accent,
+              boxShadow: `0 0 18px ${accent}`,
               duration: 0.3,
               ease: "power2.out",
               scrollTrigger: {
@@ -66,7 +76,7 @@ export default function Experience() {
     })
 
     return () => ctx.revert()
-  }, [])
+  }, [theme])
 
   return (
     <section ref={containerRef} className="relative min-h-screen py-32 bg-zinc-950 text-white px-6 md:px-12 lg:px-24 overflow-hidden">

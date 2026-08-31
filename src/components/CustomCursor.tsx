@@ -15,28 +15,23 @@ export default function CustomCursor() {
     const handleMouseEnter = () => setHidden(false)
     const handleMouseLeave = () => setHidden(true)
 
-    const handleHoverStart = () => setIsHovered(true)
-    const handleHoverEnd = () => setIsHovered(false)
+    // Delegated so elements added later (theme swaps, route changes) still
+    // trigger the hover state without re-binding listeners
+    const handleOver = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null
+      setIsHovered(Boolean(target?.closest('a, button, [data-hoverable]')))
+    }
 
     window.addEventListener('mousemove', updatePosition)
     window.addEventListener('mouseenter', handleMouseEnter)
     window.addEventListener('mouseleave', handleMouseLeave)
-
-    const linkElements = document.querySelectorAll('a, button, [data-hoverable]')
-    linkElements.forEach(el => {
-      el.addEventListener('mouseenter', handleHoverStart)
-      el.addEventListener('mouseleave', handleHoverEnd)
-    })
+    document.addEventListener('mouseover', handleOver)
 
     return () => {
       window.removeEventListener('mousemove', updatePosition)
       window.removeEventListener('mouseenter', handleMouseEnter)
       window.removeEventListener('mouseleave', handleMouseLeave)
-      
-      linkElements.forEach(el => {
-        el.removeEventListener('mouseenter', handleHoverStart)
-        el.removeEventListener('mouseleave', handleHoverEnd)
-      })
+      document.removeEventListener('mouseover', handleOver)
     }
   }, [])
 

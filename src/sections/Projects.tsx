@@ -183,7 +183,7 @@ export default function Projects() {
           to="/projects"
           className="group flex flex-col items-center gap-6"
         >
-          <div className="w-32 h-32 rounded-full border border-zinc-700 group-hover:border-red-500 flex items-center justify-center transition-colors shadow-2xl group-hover:shadow-[0_0_30px_rgba(239,68,68,0.3)]">
+          <div className="glow-on-hover w-32 h-32 rounded-full border border-zinc-700 group-hover:border-red-500 flex items-center justify-center transition-all duration-500 shadow-2xl">
              <FaArrowRight className="text-4xl text-zinc-300 group-hover:text-white transition-colors" />
           </div>
           <h3 className="text-4xl md:text-5xl font-light tracking-wide text-white group-hover:text-red-400 transition-colors">

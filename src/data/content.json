@@ -12,6 +12,59 @@
         "intro": "Three years of shipping web apps, internal systems, and AI features that make it past the demo stage. Based in Jakarta, usually mid-refactor.",
         "primaryCta": "Selected work",
         "secondaryCta": "Get in touch",
+        "terminal": {
+            "windowTitle": "vann.exe — interactive shell",
+            "prompt": "C:\\Users\\vann>",
+            "command": "run portfolio --mode=interactive --theme=cmd",
+            "banner": [
+                "Vann Runtime [Version 3.2026.08]",
+                "(c) Justine Donovan. Serial: VANN-AI-0001."
+            ],
+            "boot": [
+                {
+                    "task": "booting runtime",
+                    "result": "OK"
+                },
+                {
+                    "task": "loading skills.json",
+                    "result": "19 PKG"
+                },
+                {
+                    "task": "mounting model weights",
+                    "result": "7.2B"
+                },
+                {
+                    "task": "indexing projects",
+                    "result": "8 FOUND"
+                },
+                {
+                    "task": "resolving experience graph",
+                    "result": "4 ROLES"
+                },
+                {
+                    "task": "availability check",
+                    "result": "OPEN"
+                }
+            ],
+            "whoami": "fullstack engineer · ai systems · jakarta, id",
+            "keys": [
+                {
+                    "key": "1",
+                    "label": "selected work",
+                    "target": "#projects"
+                },
+                {
+                    "key": "2",
+                    "label": "get in touch",
+                    "target": "#contact"
+                }
+            ],
+            "telemetry": {
+                "model": "vann-7b-instruct",
+                "temp": "0.7",
+                "context": "4096"
+            }
+        },
         "industries": [
             "Retail & Malls",
             "Banking",

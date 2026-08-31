@@ -5,6 +5,19 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
+let instance: Lenis | null = null
+
+/**
+ * Scrolls to a section by selector. Goes through Lenis when it is running,
+ * since a native smooth scroll would fight Lenis' own rAF loop.
+ */
+export const scrollToSection = (selector: string) => {
+    const target = document.querySelector(selector)
+    if (!target) return
+    if (instance) instance.scrollTo(target as HTMLElement, { offset: 0 })
+    else target.scrollIntoView({ behavior: 'smooth' })
+}
+
 export const useSmoothScroll = () => {
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -20,6 +33,7 @@ export const useSmoothScroll = () => {
             // Lets in-page anchors (#projects, #contact) glide instead of jump-cutting
             anchors: { offset: 0 }
         })
+        instance = lenis
 
         // Keep ScrollTrigger in sync with Lenis so pinned/scrubbed sections don't jitter
         const update = () => ScrollTrigger.update()
@@ -33,6 +47,7 @@ export const useSmoothScroll = () => {
             lenis.off('scroll', update)
             gsap.ticker.remove(raf)
             lenis.destroy()
+            if (instance === lenis) instance = null
         }
     }, [])
 }

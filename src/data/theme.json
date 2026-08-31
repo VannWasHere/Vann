@@ -1,0 +1,20 @@
+{
+    "_comment": "Change 'defaultTheme' to pick which theme loads first. Valid ids: standard | terminal",
+    "defaultTheme": "standard",
+    "rememberUserChoice": true,
+    "shortcutKey": "t",
+    "themes": [
+        {
+            "id": "standard",
+            "label": "Standard",
+            "short": "STD",
+            "hint": "Editorial · type-led"
+        },
+        {
+            "id": "terminal",
+            "label": "Terminal",
+            "short": "CMD",
+            "hint": "Phosphor CRT · AI runtime"
+        }
+    ]
+}

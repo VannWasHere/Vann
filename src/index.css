@@ -5,7 +5,29 @@
   --color-foreground: #fff;
   --color-primary: #ef4444;
   --color-accent: #dc2626;
+  /* Semantic surfaces — swapped wholesale by the terminal theme */
+  --color-paper: #f1efea;
+  --color-ink: #0d0d0d;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Plain hex mirrors of theme colours for JS consumers (GSAP can't interpolate
+   oklch(), which is what the Tailwind palette resolves to). */
+:root {
+  --js-accent: #ef4444;
+  --js-dot-idle: #18181b;
+  --js-dot-border: #3f3f46;
+}
+
+[data-theme='terminal'] {
+  --js-accent: #ffab2e;
+  --js-dot-idle: #071612;
+  --js-dot-border: #185a3f;
+}
+
+/* Accent glow that follows the active theme */
+.group:hover .glow-on-hover {
+  box-shadow: 0 0 30px color-mix(in srgb, var(--js-accent) 32%, transparent);
 }
 
 @layer base {
@@ -104,4 +126,154 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-smooth iframe {
   pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TERMINAL THEME
+   Tailwind v4 utilities resolve colours at use site (var(--color-*)), so
+   redefining the palette under [data-theme='terminal'] re-skins every section
+   without touching a single component. Left unlayered on purpose: unlayered
+   rules outrank @layer base, so these win over the default font stack.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme='terminal'] {
+  /* Phosphor greens replace the neutral ramp */
+  --color-white: #d8ffe9;
+  --color-black: #01050a;
+  --color-zinc-50: #eafff4;
+  --color-zinc-100: #d3ffe8;
+  --color-zinc-200: #a8f7cd;
+  --color-zinc-300: #7ce8b1;
+  --color-zinc-400: #4fcf90;
+  --color-zinc-500: #35a874;
+  --color-zinc-600: #24805a;
+  --color-zinc-700: #185a3f;
+  --color-zinc-800: #0e3327;
+  --color-zinc-900: #071612;
+  --color-zinc-950: #03090a;
+
+  /* Amber alert channel replaces red */
+  --color-red-300: #ffd9a0;
+  --color-red-400: #ffc46b;
+  --color-red-500: #ffab2e;
+  --color-red-600: #f59300;
+  --color-red-700: #c26f00;
+  --color-red-800: #8a4e00;
+
+  /* Semantic surfaces */
+  --color-paper: #05100c;
+  --color-ink: #cfffe5;
+  --color-primary: #ffab2e;
+  --color-accent: #00ff9c;
+  --color-background: #01050a;
+  --color-foreground: #d8ffe9;
+}
+
+[data-theme='terminal'] body {
+  background: #01050a;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Phosphor bloom */
+  text-shadow: 0 0 8px rgba(79, 207, 144, 0.22);
+}
+
+[data-theme='terminal'] h1,
+[data-theme='terminal'] h2,
+[data-theme='terminal'] h3,
+[data-theme='terminal'] h4,
+[data-theme='terminal'] h5,
+[data-theme='terminal'] h6,
+[data-theme='terminal'] .font-display {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: -0.02em;
+}
+
+/* Serif accents have no place in a shell */
+[data-theme='terminal'] .font-editorial {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-style: normal;
+}
+
+/* Everything squares off — CLIs don't do border radius */
+[data-theme='terminal'] * {
+  border-radius: 0 !important;
+}
+
+/* Hollow display type reads as bracketed text instead of thin outlines */
+[data-theme='terminal'] .word-outline {
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: rgba(0, 255, 156, 0.5);
+}
+[data-theme='terminal'] .word-outline:hover {
+  color: var(--color-accent);
+  -webkit-text-stroke-color: var(--color-accent);
+}
+
+/* Paper grain is a CRT artefact here, not printed texture */
+[data-theme='terminal'] .grain {
+  mix-blend-mode: screen !important;
+  opacity: 0.06 !important;
+}
+
+/* ── CRT overlay ─────────────────────────────────────────────────────────── */
+
+.crt-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 8, 4, 0.5) 3px,
+    rgba(0, 8, 4, 0.5) 4px
+  );
+}
+
+.crt-glow {
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(0, 255, 156, 0.07), transparent 55%),
+    radial-gradient(circle at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.crt-flicker {
+  animation: crt-flicker 6s steps(24) infinite;
+}
+
+.crt-sweep {
+  animation: crt-sweep 7s linear infinite;
+}
+
+.terminal-cursor::after {
+  content: '';
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  margin-left: 0.15em;
+  vertical-align: text-bottom;
+  background: currentColor;
+  animation: terminal-blink 1.05s steps(2, start) infinite;
+}
+
+@keyframes crt-flicker {
+  0%, 100% { opacity: 0.92; }
+  12% { opacity: 0.97; }
+  27% { opacity: 0.88; }
+  43% { opacity: 0.96; }
+  61% { opacity: 0.9; }
+  78% { opacity: 0.95; }
+}
+
+@keyframes crt-sweep {
+  0% { transform: translate3d(0, -20%, 0); }
+  100% { transform: translate3d(0, 120vh, 0); }
+}
+
+@keyframes terminal-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-flicker,
+  .crt-sweep,
+  .terminal-cursor::after {
+    animation: none !important;
+  }
 }
