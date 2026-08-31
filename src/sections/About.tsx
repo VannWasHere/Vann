@@ -8,9 +8,9 @@ const EASE = [0.16, 1, 0.3, 1] as const
 const about = contentData.about
 
 const headlineStyles: Record<string, string> = {
-  solid: 'font-display font-semibold text-[#0d0d0d]',
+  solid: 'font-display font-semibold text-ink',
   serif: 'font-editorial italic text-red-600',
-  muted: 'font-display font-semibold text-[#0d0d0d]/30',
+  muted: 'font-display font-semibold text-ink/30',
 }
 
 /** Counts up once the strip scrolls into view. */
@@ -44,11 +44,11 @@ function StatValue({ value }: { value: string }) {
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#f1efea] px-5 py-6 md:px-6 md:py-7">
-      <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#0d0d0d]/40">
+    <div className="bg-paper px-5 py-6 md:px-6 md:py-7">
+      <div className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink/40">
         {label}
       </div>
-      <div className="mt-2 text-sm leading-snug font-medium text-[#0d0d0d] md:text-base">
+      <div className="mt-2 text-sm leading-snug font-medium text-ink md:text-base">
         {value}
       </div>
     </div>
@@ -62,7 +62,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative z-10 overflow-hidden bg-[#f1efea] px-6 py-24 text-[#0d0d0d] md:px-12 md:py-32 lg:px-20"
+      className="relative z-10 overflow-hidden bg-paper px-6 py-24 text-ink md:px-12 md:py-32 lg:px-20"
     >
       {/* Paper texture — keeps the flat light panel from feeling like a blank div */}
       <div
@@ -72,19 +72,19 @@ export default function About() {
 
       <div className="relative mx-auto max-w-7xl">
         {/* ── Section head ─────────────────────────────────────── */}
-        <div className="flex items-baseline justify-between gap-6 border-b border-[#0d0d0d]/15 pb-5">
+        <div className="flex items-baseline justify-between gap-6 border-b border-ink/15 pb-5">
           <div className="flex items-baseline gap-4 font-mono text-[10px] tracking-[0.22em] uppercase md:text-[11px]">
             <span className="text-red-600">{about.sectionIndex}</span>
-            <span className="text-[#0d0d0d]/60">{about.sectionTitle}</span>
+            <span className="text-ink/60">{about.sectionTitle}</span>
           </div>
-          <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#0d0d0d]/40">
+          <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink/40">
             {contentData.hero.location}
           </span>
         </div>
 
         {/* ── Statement ────────────────────────────────────────── */}
         <div className="pt-12 md:pt-16">
-          <h2 className="max-w-5xl text-[clamp(2rem,6vw,5rem)] leading-[1.04] tracking-[-0.03em] text-[#0d0d0d]">
+          <h2 className="max-w-5xl text-[clamp(2rem,6vw,5rem)] leading-[1.04] tracking-[-0.03em] text-ink">
             {about.headline.map((line, i) => (
               <Reveal key={i} onScroll delay={i * 0.12} className="block">
                 <span className={cn('block', headlineStyles[line.style])}>{line.text}</span>
@@ -102,10 +102,10 @@ export default function About() {
             transition={{ duration: 0.9, ease: EASE }}
             className="space-y-6 md:col-span-7"
           >
-            <p className="text-lg leading-relaxed text-[#0d0d0d] md:text-2xl md:leading-relaxed">
+            <p className="text-lg leading-relaxed text-ink md:text-2xl md:leading-relaxed">
               {about.lead}
             </p>
-            <p className="max-w-2xl text-base leading-relaxed text-[#0d0d0d]/60 md:text-lg">
+            <p className="max-w-2xl text-base leading-relaxed text-ink/60 md:text-lg">
               {about.body}
             </p>
           </motion.div>
@@ -115,9 +115,9 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-12%' }}
             transition={{ duration: 0.9, delay: 0.12, ease: EASE }}
-            className="md:col-span-5 md:pl-10 lg:border-l lg:border-[#0d0d0d]/15"
+            className="md:col-span-5 md:pl-10 lg:border-l lg:border-ink/15"
           >
-            <div className="flex items-center gap-2.5 font-mono text-[10px] tracking-[0.2em] uppercase text-[#0d0d0d]/50">
+            <div className="flex items-center gap-2.5 font-mono text-[10px] tracking-[0.2em] uppercase text-ink/50">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-600 opacity-70" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-red-600" />
@@ -129,7 +129,7 @@ export default function About() {
               {now.role}
             </h3>
 
-            <div className="mt-6 space-y-0 border-t border-[#0d0d0d]/15">
+            <div className="mt-6 space-y-0 border-t border-ink/15">
               {[
                 { label: 'Company', value: now.company },
                 { label: 'Tenure', value: now.since },
@@ -137,9 +137,9 @@ export default function About() {
               ].map((row) => (
                 <div
                   key={row.label}
-                  className="flex items-baseline justify-between gap-6 border-b border-[#0d0d0d]/15 py-3.5 transition-colors hover:border-[#0d0d0d]/40"
+                  className="flex items-baseline justify-between gap-6 border-b border-ink/15 py-3.5 transition-colors hover:border-ink/40"
                 >
-                  <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-[#0d0d0d]/40">
+                  <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink/40">
                     {row.label}
                   </span>
                   <span className="text-right text-sm font-medium">{row.value}</span>
@@ -151,11 +151,11 @@ export default function About() {
 
         {/* ── Principles ───────────────────────────────────────── */}
         <div className="pt-20 md:pt-28">
-          <div className="mb-8 font-mono text-[10px] tracking-[0.22em] uppercase text-[#0d0d0d]/40">
+          <div className="mb-8 font-mono text-[10px] tracking-[0.22em] uppercase text-ink/40">
             {about.principlesLabel}
           </div>
 
-          <div className="border-b border-[#0d0d0d]/15">
+          <div className="border-b border-ink/15">
             {about.principles.map((item, i) => (
               <motion.div
                 key={item.index}
@@ -163,7 +163,7 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-10%' }}
                 transition={{ duration: 0.8, delay: i * 0.08, ease: EASE }}
-                className="group relative grid gap-3 border-t border-[#0d0d0d]/15 py-7 md:grid-cols-12 md:gap-8 md:py-9"
+                className="group relative grid gap-3 border-t border-ink/15 py-7 md:grid-cols-12 md:gap-8 md:py-9"
               >
                 {/* Hairline that draws itself on hover */}
                 <span
@@ -179,7 +179,7 @@ export default function About() {
                   {item.title}
                 </h3>
 
-                <p className="max-w-2xl text-sm leading-relaxed text-[#0d0d0d]/55 md:col-span-7 md:text-base">
+                <p className="max-w-2xl text-sm leading-relaxed text-ink/55 md:col-span-7 md:text-base">
                   {item.body}
                 </p>
               </motion.div>
@@ -188,13 +188,13 @@ export default function About() {
         </div>
 
         {/* ── Stats ────────────────────────────────────────────── */}
-        <div className="mt-20 grid grid-cols-2 gap-px border border-[#0d0d0d]/15 bg-[#0d0d0d]/15 md:mt-28 md:grid-cols-4">
+        <div className="mt-20 grid grid-cols-2 gap-px border border-ink/15 bg-ink/15 md:mt-28 md:grid-cols-4">
           {about.stats.map((stat) => (
-            <div key={stat.label} className="bg-[#f1efea] px-5 py-8 md:px-8 md:py-10">
+            <div key={stat.label} className="bg-paper px-5 py-8 md:px-8 md:py-10">
               <div className="font-display text-4xl font-semibold tracking-tight md:text-6xl">
                 <StatValue value={stat.value} />
               </div>
-              <div className="mt-2 font-mono text-[10px] tracking-[0.18em] uppercase text-[#0d0d0d]/45">
+              <div className="mt-2 font-mono text-[10px] tracking-[0.18em] uppercase text-ink/45">
                 {stat.label}
               </div>
             </div>
@@ -204,17 +204,17 @@ export default function About() {
         {/* ── Education record ─────────────────────────────────── */}
         <div className="grid gap-10 pt-20 md:grid-cols-12 md:gap-16 md:pt-28">
           <div className="md:col-span-5">
-            <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-[#0d0d0d]/40">
+            <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-ink/40">
               {edu.label}
             </div>
-            <p className="font-editorial mt-5 text-2xl leading-snug text-[#0d0d0d]/80 italic md:text-3xl">
+            <p className="font-editorial mt-5 text-2xl leading-snug text-ink/80 italic md:text-3xl">
               {edu.story}
             </p>
             <div className="mt-7 flex flex-wrap gap-2">
               {edu.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-[#0d0d0d]/20 px-3 py-1.5 font-mono text-[10px] tracking-[0.12em] uppercase text-[#0d0d0d]/60 transition-colors hover:border-red-600/50 hover:text-red-600"
+                  className="rounded-full border border-ink/20 px-3 py-1.5 font-mono text-[10px] tracking-[0.12em] uppercase text-ink/60 transition-colors hover:border-red-600/50 hover:text-red-600"
                 >
                   {tag}
                 </span>
@@ -222,7 +222,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-px self-start border border-[#0d0d0d]/15 bg-[#0d0d0d]/15 md:col-span-7">
+          <div className="grid grid-cols-2 gap-px self-start border border-ink/15 bg-ink/15 md:col-span-7">
             <Field label="University" value={edu.campus} />
             <Field label="Major" value={edu.major} />
             <Field label="Focus" value={edu.focus} />

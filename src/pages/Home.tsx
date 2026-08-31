@@ -5,19 +5,22 @@ import { FaGithub, FaLinkedin, FaArrowUp } from 'react-icons/fa'
 
 import CustomCursor from '../components/CustomCursor'
 import Hero from '../sections/Hero'
+import HeroTerminal from '../sections/HeroTerminal'
 import About from '../sections/About'
 import Projects from '../sections/Projects'
 import Experience from '../sections/Experience'
 import Skills from '../sections/Skills'
 import Contact from '../sections/Contact'
 import contentData from '../data/content.json'
+import { useTheme } from '../theme/themeContext'
 
 export default function Home() {
+  const { isTerminal } = useTheme()
   useSmoothScroll()
 
   useEffect(() => {
     initScrollTrigger()
-  }, [])
+  }, [isTerminal])
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -29,7 +32,7 @@ export default function Home() {
 
       <div id="smooth-wrapper" className="relative">
         <div id="smooth-content" className="relative">
-          <Hero />
+          {isTerminal ? <HeroTerminal /> : <Hero />}
           <About />
           <Projects />
           <Experience />
