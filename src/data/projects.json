@@ -1,5 +1,6 @@
 [
     {
+        "slug": "hr-kpi",
         "title": "HR KPI Application",
         "label": "Freelance Project",
         "description": "Freelance build of a KPI management platform for an HR team — target setting, weighted scoring, and periodic performance reviews that used to live in spreadsheets. Role-based dashboards keep employees, managers, and HR admins on the same numbers.",
@@ -8,12 +9,12 @@
             "Supabase",
             "Tailwind CSS"
         ],
-        "image": "/hrkpi.png",
         "link": "",
         "year": "2026",
         "featured": true
     },
     {
+        "slug": "lippo-cms",
         "title": "CMS Application",
         "label": "Freelance Project",
         "description": "Designed and developed both frontend (User View) and backend CMS for Lippo Mall Indonesia. Built frontend using NextJS with responsive design. Developed seamless custom CMS using Laravel and React.",
@@ -23,12 +24,12 @@
             "MariaDB",
             "Tailwind CSS"
         ],
-        "image": "/lippocms.png",
         "link": "https://lippomalls.com/",
         "year": "2025",
         "featured": true
     },
     {
+        "slug": "styles-member-app",
         "title": "Styles — Lippo Member's App",
         "label": "Freelance Project",
         "description": "Developed mobile UI based on Figma designs for Lippo Mall Indonesia's member application. Created CI/CD pipelines for production deployment.",
@@ -38,12 +39,12 @@
             "Insider",
             "Firebase"
         ],
-        "image": "/styles.png",
         "link": "",
         "year": "2025",
         "featured": true
     },
     {
+        "slug": "hr-recruitment",
         "title": "HR Recruitment App",
         "label": "Internal Project",
         "description": "Built a fullstack HR recruitment system with AI-powered CV screening. Finetuned models for targeted responses. Integrated OCR for automated document processing.",
@@ -53,12 +54,12 @@
             "Ollama",
             "Python"
         ],
-        "image": "",
         "link": "",
         "year": "2025",
         "featured": false
     },
     {
+        "slug": "contract-management",
         "title": "Contract Management System",
         "label": "Internal Project",
         "description": "Designed and developed a fullstack web application to streamline contract management between companies and clients with responsive UI and robust backend services.",
@@ -68,12 +69,12 @@
             "PostgreSQL",
             "Pocketbase"
         ],
-        "image": "",
         "link": "",
         "year": "2024",
         "featured": false
     },
     {
+        "slug": "document-collaboration",
         "title": "On-Premise Document Collaboration",
         "label": "Internal Project",
         "description": "Developed a real-time collaborative editing tool for Bank Indonesia. Integrated CKEditor with WebSocket support for multi-user editing. Managed on-premise infrastructure on OCP.",
@@ -84,12 +85,12 @@
             "CKEditor",
             "MySQL"
         ],
-        "image": "",
         "link": "",
         "year": "2024",
         "featured": false
     },
     {
+        "slug": "huawei-portfolio",
         "title": "Huawei Product Portfolio Web",
         "label": "Internal Project",
         "description": "Developed frontend application for promoting company product portfolio with responsive mobile-first design.",
@@ -97,12 +98,12 @@
             "Vue",
             "Tailwind CSS"
         ],
-        "image": "/huawei.png",
         "link": "https://huawei.infracom-tech.com/",
         "year": "2024",
         "featured": true
     },
     {
+        "slug": "motorcycle-price-prediction",
         "title": "Motorcycle Price Prediction",
         "label": "College Project",
         "description": "Built a deep learning model deployed on Flask with a React frontend. Designed the API system for communication between the frontend and the prediction model.",
@@ -112,7 +113,6 @@
             "Flask",
             "Python"
         ],
-        "image": "",
         "link": "",
         "year": "2023",
         "featured": false

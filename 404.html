@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--preload-->
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="theme-color" content="#0b0b0a" />
+  <!--meta:notFound-->
+</head>
+
+<body>
+  <div id="root"><!--app-html--></div>
+  <!-- Only pulls in the stylesheet; the prerender step strips this tag so the page ships no JS -->
+  <script type="module" src="/src/entries/not-found.tsx"></script>
+</body>
+
+</html>

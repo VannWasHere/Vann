@@ -1,4 +1,38 @@
 {
+    "meta": {
+        "siteName": "Vann",
+        "siteUrl": "",
+        "locale": "en_US",
+        "pages": {
+            "home": {
+                "path": "/",
+                "title": "Vann — Justine Donovan, Software Engineer in Jakarta",
+                "description": "Fullstack engineer with a soft spot for AI. Three years of shipping web apps, internal systems, and AI features for retail, banking, telco and HR teams."
+            },
+            "projects": {
+                "path": "/projects/",
+                "title": "The full manifest — Vann",
+                "description": "Every project Justine Donovan (Vann) has shipped: CMS platforms, HR systems, AI-powered screening, mobile apps and more."
+            },
+            "notFound": {
+                "path": "/404",
+                "title": "Lost in transit — Vann",
+                "description": "This page doesn't exist."
+            }
+        }
+    },
+    "nav": {
+        "items": [
+            { "index": "02", "label": "Work", "href": "#work" },
+            { "index": "03", "label": "About", "href": "#about" },
+            { "index": "04", "label": "Experience", "href": "#experience" },
+            { "index": "05", "label": "Stack", "href": "#stack" },
+            { "index": "06", "label": "Contact", "href": "#contact" }
+        ],
+        "menu": "Menu",
+        "close": "Close",
+        "skip": "Skip to content"
+    },
     "hero": {
         "name": "Justine Donovan",
         "alias": "Vann",
@@ -6,77 +40,61 @@
         "location": "Jakarta, ID",
         "timezone": "Asia/Jakarta",
         "status": "Open for work",
+        "edition": "Portfolio — Edition 2026",
+        "tracking": "VN-0001",
         "lineOne": "Software",
         "lineTwo": "Engineer",
         "accent": "with a soft spot for AI",
         "intro": "Three years of shipping web apps, internal systems, and AI features that make it past the demo stage. Based in Jakarta, usually mid-refactor.",
-        "primaryCta": "Selected work",
-        "secondaryCta": "Get in touch",
-        "terminal": {
-            "windowTitle": "vann.exe — interactive shell",
-            "prompt": "C:\\Users\\vann>",
-            "command": "run portfolio --mode=interactive --theme=cmd",
-            "banner": [
-                "Vann Runtime [Version 3.2026.08]",
-                "(c) Justine Donovan. Serial: VANN-AI-0001."
-            ],
-            "boot": [
-                {
-                    "task": "booting runtime",
-                    "result": "OK"
-                },
-                {
-                    "task": "loading skills.json",
-                    "result": "19 PKG"
-                },
-                {
-                    "task": "mounting model weights",
-                    "result": "7.2B"
-                },
-                {
-                    "task": "indexing projects",
-                    "result": "8 FOUND"
-                },
-                {
-                    "task": "resolving experience graph",
-                    "result": "4 ROLES"
-                },
-                {
-                    "task": "availability check",
-                    "result": "OPEN"
-                }
-            ],
-            "whoami": "fullstack engineer · ai systems · jakarta, id",
-            "keys": [
-                {
-                    "key": "1",
-                    "label": "selected work",
-                    "target": "#projects"
-                },
-                {
-                    "key": "2",
-                    "label": "get in touch",
-                    "target": "#contact"
-                }
-            ],
-            "telemetry": {
-                "model": "vann-7b-instruct",
-                "temp": "0.7",
-                "context": "4096"
-            }
+        "label": {
+            "title": "Shipping label",
+            "from": "Jakarta, ID",
+            "shipTo": "Your team, anywhere",
+            "service": "Fullstack · AI systems",
+            "route": "JKT → Anywhere"
         },
+        "figure": "Fig. 01 — The monogram. Drag to spin.",
+        "primaryCta": "Open the box",
+        "secondaryCta": "Get in touch",
+        "industriesLabel": "Built for",
         "industries": [
             "Retail & Malls",
             "Banking",
             "Telco",
             "HR Tech",
             "Enterprise IT"
-        ],
-        "scrollText": "Scroll"
+        ]
+    },
+    "work": {
+        "index": "02",
+        "title": "Selected work",
+        "headline": ["Things I've", "shipped."],
+        "accent": "Five packages, one box.",
+        "intro": "Every face of the box holds a project. Drag to spin it, then click the face pointing at you to open its case file.",
+        "figure": "Fig. 02 — The box",
+        "hint": "Drag to spin · Click to open",
+        "keys": "to turn",
+        "openCase": "Open case file",
+        "openArchive": "Open the archive",
+        "previous": "Previous face",
+        "next": "Next face",
+        "visit": "Visit live site",
+        "private": "Private build — walkthrough on request",
+        "manifestTitle": "Manifest",
+        "manifestMeta": "Every package, newest first",
+        "archiveCta": "Open the full archive",
+        "archiveFace": {
+            "title": "Vann Shipping Co.",
+            "from": "Jakarta, ID",
+            "to": "You",
+            "note": "Fragile — handle with care",
+            "summary": "The full manifest: every project, private builds included."
+        }
     },
     "about": {
-        "sectionIndex": "01",
+        "sectionIndex": "03",
         "sectionTitle": "About",
+        "meta": "Bill of lading",
         "headline": [
             {
                 "text": "I build the",
@@ -151,27 +169,57 @@
             ]
         }
     },
-    "projectsSection": {
-        "sectionSubtitle": "[ 02 ] Selected Works"
-    },
     "experienceSection": {
-        "sectionSubtitle": "[ 03 ] Chronicle",
-        "title": "Experience"
+        "sectionIndex": "04",
+        "sectionTitle": "Experience",
+        "headline": "Tracking history",
+        "accent": "Four stops so far.",
+        "intro": "A timeline of roles that shaped my craft — from teaching fundamentals to architecting enterprise solutions.",
+        "statusLabel": "Status",
+        "status": "In transit",
+        "stops": ["Current location", "In transit", "Checkpoint", "Origin scan"]
     },
     "skillsSection": {
-        "sectionSubtitle": "[ 04 ] Tech Arsenal"
+        "sectionIndex": "05",
+        "sectionTitle": "Stack",
+        "headline": "The toolbox",
+        "accent": "From pixel to production.",
+        "intro": "Technologies I use to bring ideas to life — from pixel to production."
     },
     "contact": {
-        "sectionSubtitle": "[ 05 ] Let's Talk",
+        "sectionIndex": "06",
+        "sectionTitle": "Contact",
+        "meta": "Return address",
         "title": "Ready to innovate?",
         "description": "Whether it's a fullstack application, AI integration, or a scalable frontend system — I'm just a message away.",
+        "signoff": "— Vann",
+        "postmark": "Jakarta · 2026",
+        "stamp": "Priority",
+        "copy": "Copy",
+        "copied": "Copied",
         "phoneLabel": "+62 813 1078 3796",
         "phoneLink": "https://wa.me/6281310783796",
         "emailLabel": "justinedonovan812@gmail.com",
         "emailValue": "justinedonovan812@gmail.com"
     },
+    "archive": {
+        "sectionIndex": "A",
+        "sectionTitle": "Archive",
+        "title": "The full manifest",
+        "accent": "Everything that left the building.",
+        "intro": "Freelance builds, internal platforms and the college project that started it. Live sites link out; private builds get a walkthrough on request.",
+        "all": "All",
+        "back": "Back to the box"
+    },
+    "notFound": {
+        "code": "404",
+        "title": "Lost in transit",
+        "body": "This package never made it to its destination. It may have been moved, or it never shipped at all.",
+        "cta": "Return to sender"
+    },
     "footer": {
         "text": "Vann. Designed with aesthetics in mind.",
+        "top": "Back to top",
         "github": "https://github.com/VannWasHere",
         "linkedin": "https://linkedin.com/in/justinedonovan"
     }

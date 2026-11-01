@@ -1,0 +1,12 @@
+{
+    "_comment": "V monogram on a 64x64 canvas (y points down, like SVG). Shared by public/favicon.svg, scripts/generate-icons.mjs, the hero poster and the 3D model.",
+    "canvas": 64,
+    "thick": {
+        "color": "#ffffff",
+        "points": [[13, 15], [24, 15], [32.4, 37], [32.4, 49]]
+    },
+    "thin": {
+        "color": "#ef4444",
+        "points": [[51, 15], [43, 15], [32, 37], [32, 49]]
+    }
+}

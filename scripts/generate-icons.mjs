@@ -7,7 +7,7 @@
  * Run: node scripts/generate-icons.mjs
  */
 import { deflateSync } from 'node:zlib'
-import { writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -16,29 +16,24 @@ const PUBLIC = resolve(ROOT, 'public')
 
 /* ── Design (64x64 canvas, matches favicon.svg) ─────────────────────────── */
 
-const CANVAS = 64
+// Stem geometry is shared with the hero's 3D model — src/data/monogram.json
+const MONOGRAM = JSON.parse(readFileSync(resolve(ROOT, 'src/data/monogram.json'), 'utf8'))
+
+const hex = (value) => [1, 3, 5].map((i) => Number.parseInt(value.slice(i, i + 2), 16))
+
+const CANVAS = MONOGRAM.canvas
 const PLATE_RADIUS = 14
 const PLATE_TOP = [0x16, 0x16, 0x16]
 const PLATE_BOTTOM = [0x06, 0x06, 0x06]
 const HAIRLINE = [0xff, 0xff, 0xff]
 const HAIRLINE_ALPHA = 0.1
-const WHITE = [0xff, 0xff, 0xff]
-const RED = [0xef, 0x44, 0x44]
+const WHITE = hex(MONOGRAM.thick.color)
+const RED = hex(MONOGRAM.thin.color)
 
 // Thick stem (white) and thin stem (red) — the seam at x=32 is overlapped by
 // the red path so no anti-aliasing gap shows between them.
-const STEM_THICK = [
-  [13, 15],
-  [24, 15],
-  [32.4, 37],
-  [32.4, 49],
-]
-const STEM_THIN = [
-  [51, 15],
-  [43, 15],
-  [32, 37],
-  [32, 49],
-]
+const STEM_THICK = MONOGRAM.thick.points
+const STEM_THIN = MONOGRAM.thin.points
 
 const SUPERSAMPLE = 4
 

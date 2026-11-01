@@ -1,0 +1,53 @@
+{
+    "_comment": "Icons used on the site, by react-icons component name (Si = Simple Icons, Fa = Font Awesome, Hi = Heroicons). npm run sprite (also part of npm run build) turns them into one cached SVG sprite, so no icon code ships to the browser.",
+    "fallback": "FaCode",
+    "tech": {
+        "React": "SiReact",
+        "React Native": "SiReact",
+        "Metro": "SiReact",
+        "Next.js": "SiNextdotjs",
+        "Tailwind CSS": "SiTailwindcss",
+        "Python": "SiPython",
+        "Laravel": "SiLaravel",
+        "MariaDB": "SiMariadb",
+        "FastAPI": "SiFastapi",
+        "Ollama": "SiOllama",
+        "PostgreSQL": "SiPostgresql",
+        "Pocketbase": "SiPocketbase",
+        "Supabase": "SiSupabase",
+        "Vue": "SiVuedotjs",
+        ".NET": "SiDotnet",
+        "OCP": "SiRedhatopenshift",
+        "MySQL": "SiMysql",
+        "Flask": "SiFlask",
+        "Firebase": "SiFirebase",
+        "Insider": "HiSpeakerphone"
+    },
+    "skill": {
+        "FaReact": "SiReact",
+        "SiTypescript": "SiTypescript",
+        "SiJavascript": "SiJavascript",
+        "SiTailwindcss": "SiTailwindcss",
+        "FaNodeJs": "SiNodedotjs",
+        "SiPython": "SiPython",
+        "SiNextdotjs": "SiNextdotjs",
+        "SiAngular": "SiAngular",
+        "SiVuedotjs": "SiVuedotjs",
+        "FaHtml5": "SiHtml5",
+        "FaCss3Alt": "SiCss",
+        "SiFastapi": "SiFastapi",
+        "SiExpress": "SiExpress",
+        "SiGo": "SiGo",
+        "SiLaravel": "SiLaravel",
+        "SiPostgresql": "SiPostgresql",
+        "SiMysql": "SiMysql",
+        "FaGitAlt": "SiGit",
+        "FaDocker": "SiDocker",
+        "FaLinux": "SiLinux"
+    },
+    "ui": {
+        "github": "FaGithub",
+        "linkedin": "FaLinkedin",
+        "whatsapp": "FaWhatsapp"
+    }
+}

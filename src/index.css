@@ -1,279 +1,406 @@
 @import "tailwindcss";
 
-@theme {
-  --color-background: #000;
-  --color-foreground: #fff;
-  --color-primary: #ef4444;
-  --color-accent: #dc2626;
-  /* Semantic surfaces — swapped wholesale by the terminal theme */
-  --color-paper: #f1efea;
-  --color-ink: #0d0d0d;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+/* ═══════════════════════════════════════════════════════════════════════════
+   FONTS — self-hosted, latin + latin-ext only. Instrument Sans carries both the
+   condensed display cut (wdth 75) and body text, so one preloaded file covers
+   the LCP headline.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: 'Instrument Sans Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  src: url('@fontsource-variable/instrument-sans/files/instrument-sans-latin-standard-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Plain hex mirrors of theme colours for JS consumers (GSAP can't interpolate
-   oklch(), which is what the Tailwind palette resolves to). */
-:root {
-  --js-accent: #ef4444;
-  --js-dot-idle: #18181b;
-  --js-dot-border: #3f3f46;
+@font-face {
+  font-family: 'Instrument Sans Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  src: url('@fontsource-variable/instrument-sans/files/instrument-sans-latin-ext-standard-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-[data-theme='terminal'] {
-  --js-accent: #ffab2e;
-  --js-dot-idle: #071612;
-  --js-dot-border: #185a3f;
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url('@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Accent glow that follows the active theme */
-.group:hover .glow-on-hover {
-  box-shadow: 0 0 30px color-mix(in srgb, var(--js-accent) 32%, transparent);
-}
-
-@layer base {
-  html, body {
-    @apply bg-black text-white m-0 p-0 antialiased overflow-x-hidden;
-    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    cursor: none;
-  }
-  h1, h2, h3, h4, h5, h6, .font-display {
-    font-family: 'Syne', sans-serif;
-  }
-  /* Editorial serif used for accent phrases */
-  .font-editorial {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-weight: 400;
-  }
-}
-
-@layer utilities {
-  /* Hollow display type — fills in on hover */
-  .word-outline {
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.55);
-    transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                -webkit-text-stroke-color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .word-outline:hover {
-    color: #fff;
-    -webkit-text-stroke-color: #fff;
-  }
-  .word-solid {
-    transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                -webkit-text-stroke-color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    -webkit-text-stroke: 1.5px transparent;
-  }
-  .word-solid:hover {
-    color: transparent;
-    -webkit-text-stroke-color: rgba(255, 255, 255, 0.55);
-  }
-
-  /* Analog film grain — kills the flat CSS-gradient look */
-  .grain::after {
-    content: '';
-    position: absolute;
-    inset: -50%;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
-    opacity: 0.16;
-    pointer-events: none;
-    animation: grain-shift 6s steps(4) infinite;
-  }
-
-  .marquee-track {
-    animation: marquee 34s linear infinite;
-  }
-  .marquee-track:hover {
-    animation-play-state: paused;
-  }
-}
-
-@keyframes marquee {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-50%, 0, 0); }
-}
-
-@keyframes grain-shift {
-  0%   { transform: translate(0, 0); }
-  25%  { transform: translate(-2%, 1%); }
-  50%  { transform: translate(1%, -2%); }
-  75%  { transform: translate(-1%, -1%); }
-  100% { transform: translate(0, 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track,
-  .grain::after {
-    animation: none !important;
-  }
-}
-
-/* Lenis styles */
-html.lenis, html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-smooth iframe {
-  pointer-events: none;
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url('@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   TERMINAL THEME
-   Tailwind v4 utilities resolve colours at use site (var(--color-*)), so
-   redefining the palette under [data-theme='terminal'] re-skins every section
-   without touching a single component. Left unlayered on purpose: unlayered
-   rules outrank @layer base, so these win over the default font stack.
+   TOKENS — "Shipped": graphite, paper, signal red. The default Tailwind palette
+   is cleared so only these colours can appear.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-[data-theme='terminal'] {
-  /* Phosphor greens replace the neutral ramp */
-  --color-white: #d8ffe9;
-  --color-black: #01050a;
-  --color-zinc-50: #eafff4;
-  --color-zinc-100: #d3ffe8;
-  --color-zinc-200: #a8f7cd;
-  --color-zinc-300: #7ce8b1;
-  --color-zinc-400: #4fcf90;
-  --color-zinc-500: #35a874;
-  --color-zinc-600: #24805a;
-  --color-zinc-700: #185a3f;
-  --color-zinc-800: #0e3327;
-  --color-zinc-900: #071612;
-  --color-zinc-950: #03090a;
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
 
-  /* Amber alert channel replaces red */
-  --color-red-300: #ffd9a0;
-  --color-red-400: #ffc46b;
-  --color-red-500: #ffab2e;
-  --color-red-600: #f59300;
-  --color-red-700: #c26f00;
-  --color-red-800: #8a4e00;
+  --color-graphite-950: #0b0b0a;
+  --color-graphite-900: #121211;
+  --color-graphite-850: #171715;
+  --color-graphite-800: #1e1e1b;
+  --color-graphite-700: #2a2a26;
+  --color-graphite-600: #3d3c37;
+  --color-graphite-500: #5f5d56;
+  --color-graphite-400: #8e8b83;
+  --color-graphite-300: #b5b2a9;
 
-  /* Semantic surfaces */
-  --color-paper: #05100c;
-  --color-ink: #cfffe5;
-  --color-primary: #ffab2e;
-  --color-accent: #00ff9c;
-  --color-background: #01050a;
-  --color-foreground: #d8ffe9;
+  --color-paper-50: #f6f4ee;
+  --color-paper-100: #efece4;
+  --color-paper-200: #e4e0d5;
+  --color-paper-300: #d3cec1;
+
+  /* Ink on paper: muted passes AA (5.8:1) for small text, faint is decoration only */
+  --color-ink: #0e0e0c;
+  --color-ink-muted: #5c5a53;
+  --color-ink-faint: #7a776e;
+
+  /* Signal red; the 700 shade is for small text on paper (5.5:1) */
+  --color-signal: #ef4444;
+  --color-signal-600: #dc2626;
+  --color-signal-700: #b91c1c;
+
+  --font-sans: 'Instrument Sans Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-[data-theme='terminal'] body {
-  background: #01050a;
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  /* Phosphor bloom */
-  text-shadow: 0 0 8px rgba(79, 207, 144, 0.22);
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-graphite-950 font-sans text-paper-100 antialiased;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    @apply bg-signal text-ink;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+  }
+
+  /* Leaves room for the sticky nav when jumping to a section */
+  section[id] {
+    scroll-margin-top: 3.5rem;
+  }
+
+  /* Modal case file: keep the page from scrolling underneath */
+  body:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }
 
-[data-theme='terminal'] h1,
-[data-theme='terminal'] h2,
-[data-theme='terminal'] h3,
-[data-theme='terminal'] h4,
-[data-theme='terminal'] h5,
-[data-theme='terminal'] h6,
-[data-theme='terminal'] .font-display {
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: -0.02em;
+/* ═══════════════════════════════════════════════════════════════════════════
+   TYPE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Condensed caps — headlines, crate markings, big numbers */
+@utility type-display {
+  font-family: var(--font-sans);
+  font-stretch: 75%;
+  font-weight: 640;
+  text-transform: uppercase;
+  letter-spacing: -0.012em;
+  line-height: 0.86;
 }
 
-/* Serif accents have no place in a shell */
-[data-theme='terminal'] .font-editorial {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-style: normal;
+/* Editorial italic accents */
+@utility type-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
-/* Everything squares off — CLIs don't do border radius */
-[data-theme='terminal'] * {
-  border-radius: 0 !important;
+/* Manifest labels: small mono caps */
+@utility type-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  font-weight: 450;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
-/* Hollow display type reads as bracketed text instead of thin outlines */
-[data-theme='terminal'] .word-outline {
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: rgba(0, 255, 156, 0.5);
-}
-[data-theme='terminal'] .word-outline:hover {
-  color: var(--color-accent);
-  -webkit-text-stroke-color: var(--color-accent);
+@utility container-page {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 2.5rem);
 }
 
-/* Paper grain is a CRT artefact here, not printed texture */
-[data-theme='terminal'] .grain {
-  mix-blend-mode: screen !important;
-  opacity: 0.06 !important;
+/* ═══════════════════════════════════════════════════════════════════════════
+   SURFACES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Paper grain painted once as part of the background — no blend modes, no
+   animation, so scrolling over it costs nothing */
+@utility surface-paper {
+  background-color: var(--color-paper-100);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.04 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--color-ink);
 }
 
-/* ── CRT overlay ─────────────────────────────────────────────────────────── */
-
-.crt-scanlines {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0px,
-    rgba(0, 0, 0, 0) 2px,
-    rgba(0, 8, 4, 0.5) 3px,
-    rgba(0, 8, 4, 0.5) 4px
-  );
+/* Faint 12-column guides */
+@utility guides {
+  background-image: linear-gradient(to right, rgb(239 236 228 / 0.035) 1px, transparent 1px);
+  background-size: calc(100% / 12) 100%;
 }
 
-.crt-glow {
+/* Perforated postage-stamp edge */
+@utility perforated {
+  --r: 5px;
+  padding: calc(2 * var(--r));
+  -webkit-mask:
+    conic-gradient(#000 0 0) content-box,
+    radial-gradient(var(--r), #0000 97%, #000) var(--r) var(--r) / calc(2 * var(--r)) calc(2 * var(--r)) round;
+  mask:
+    conic-gradient(#000 0 0) content-box,
+    radial-gradient(var(--r), #0000 97%, #000) var(--r) var(--r) / calc(2 * var(--r)) calc(2 * var(--r)) round;
+}
+
+/* Corner registration marks, drawn with gradients so they need no markup */
+@utility registration {
+  --mark: rgb(239 236 228 / 0.28);
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(0, 255, 156, 0.07), transparent 55%),
-    radial-gradient(circle at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+    linear-gradient(var(--mark), var(--mark)) top left / 14px 1px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top left / 1px 14px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top right / 14px 1px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) top right / 1px 14px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom left / 14px 1px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom left / 1px 14px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom right / 14px 1px no-repeat,
+    linear-gradient(var(--mark), var(--mark)) bottom right / 1px 14px no-repeat;
 }
 
-.crt-flicker {
-  animation: crt-flicker 6s steps(24) infinite;
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOTION — transform and opacity only, everything off under reduced motion
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Scroll reveals: src/lib/reveal.ts only adds .reveal-pending to elements that
+   start below the fold, so prerendered content is never hidden without JS */
+[data-reveal] {
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
-.crt-sweep {
-  animation: crt-sweep 7s linear infinite;
+[data-reveal].reveal-pending {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
 }
 
-.terminal-cursor::after {
-  content: '';
-  display: inline-block;
-  width: 0.6em;
-  height: 1.05em;
-  margin-left: 0.15em;
-  vertical-align: text-bottom;
-  background: currentColor;
-  animation: terminal-blink 1.05s steps(2, start) infinite;
+/* Masked line reveal — the line slides up from behind its own baseline */
+[data-reveal='line'] {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
 }
 
-@keyframes crt-flicker {
-  0%, 100% { opacity: 0.92; }
-  12% { opacity: 0.97; }
-  27% { opacity: 0.88; }
-  43% { opacity: 0.96; }
-  61% { opacity: 0.9; }
-  78% { opacity: 0.95; }
+[data-reveal='line'] > * {
+  display: block;
+  transition: transform 1.1s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
-@keyframes crt-sweep {
-  0% { transform: translate3d(0, -20%, 0); }
-  100% { transform: translate3d(0, 120vh, 0); }
+[data-reveal='line'].reveal-pending {
+  opacity: 1;
+  transform: none;
 }
 
-@keyframes terminal-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
+[data-reveal='line'].reveal-pending > * {
+  transform: translate3d(0, 108%, 0);
+}
+
+/* Hairlines that draw themselves in */
+[data-reveal='rule'] {
+  transform-origin: left center;
+}
+
+[data-reveal='rule'].reveal-pending {
+  opacity: 1;
+  transform: scaleX(0);
+}
+
+.marquee-track {
+  animation: marquee var(--marquee-duration, 42s) linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Route line in Tracking history: drawn by scroll where supported */
+.route-progress {
+  transform-origin: top center;
+}
+
+@supports (animation-timeline: view()) {
+  .route-progress {
+    animation: route-draw linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 55%;
+  }
+}
+
+@keyframes route-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.status-ping {
+  animation: status-ping 2.4s var(--ease-out-expo) infinite;
+}
+
+@keyframes status-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* Native dialog with an entry transition (no JS animation) */
+dialog.case-file {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0) scale(0.985);
+  transition:
+    opacity 0.35s var(--ease-out-expo),
+    transform 0.45s var(--ease-out-expo),
+    overlay 0.45s allow-discrete,
+    display 0.45s allow-discrete;
+}
+
+dialog.case-file[open] {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  dialog.case-file[open] {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.985);
+  }
+}
+
+dialog.case-file::backdrop {
+  background: rgb(11 11 10 / 0);
+  transition:
+    background 0.35s var(--ease-out-expo),
+    overlay 0.45s allow-discrete,
+    display 0.45s allow-discrete;
+}
+
+dialog.case-file[open]::backdrop {
+  background: rgb(11 11 10 / 0.78);
+}
+
+@starting-style {
+  dialog.case-file[open]::backdrop {
+    background: rgb(11 11 10 / 0);
+  }
+}
+
+/* Mobile menu (Popover API) */
+.menu-sheet {
+  opacity: 0;
+  transform: translate3d(0, -8px, 0);
+  transition:
+    opacity 0.3s var(--ease-out-expo),
+    transform 0.4s var(--ease-out-expo),
+    overlay 0.4s allow-discrete,
+    display 0.4s allow-discrete;
+}
+
+.menu-sheet:popover-open {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .menu-sheet:popover-open {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+/* 3D stages: the canvas fades in over the poster once its first frame is ready */
+.stage-canvas,
+.stage-poster {
+  transition: opacity 0.7s var(--ease-out-expo);
+}
+
+.stage-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .crt-flicker,
-  .crt-sweep,
-  .terminal-cursor::after {
+  [data-reveal],
+  [data-reveal='line'] > * {
+    transition-duration: 0.01ms !important;
+  }
+
+  .marquee-track,
+  .route-progress,
+  .status-ping {
     animation: none !important;
   }
 }

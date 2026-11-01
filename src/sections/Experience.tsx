@@ -1,131 +1,94 @@
-import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { gsap } from 'gsap'
-import experienceData from '../data/experience.json'
-import contentData from '../data/content.json'
-import { useTheme } from '../theme/themeContext'
+import content from '../data/content.json'
+import experience from '../data/experience.json'
+import SectionHeader from '../components/SectionHeader'
+import { StatusDot } from '../components/Nav'
+import { revealDelay } from '../lib/reveal'
+import { cn } from '../utils'
+
+const section = content.experienceSection
+const [current] = experience
+
+/** First stop is where the parcel is now, the last is where it started. */
+function stopLabel(index: number) {
+  const [now, transit, checkpoint, origin] = section.stops
+  if (index === 0) return now
+  if (index === experience.length - 1) return origin
+  return index % 2 === 1 ? transit : checkpoint
+}
 
 export default function Experience() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { theme } = useTheme()
-
-  useEffect(() => {
-    if (!containerRef.current) return
-    const items = gsap.utils.toArray<HTMLElement>('.exp-item')
-
-    // Timeline colours come from the theme so the dots follow the palette
-    const styles = getComputedStyle(document.documentElement)
-    const readVar = (name: string, fallback: string) =>
-      styles.getPropertyValue(name).trim() || fallback
-    const accent = readVar('--js-accent', '#ef4444')
-    const dotIdle = readVar('--js-dot-idle', '#18181b')
-    const dotBorder = readVar('--js-dot-border', '#3f3f46')
-
-    const ctx = gsap.context(() => {
-      items.forEach((item) => {
-        gsap.fromTo(item,
-          { opacity: 0, x: -40, scale: 0.97 },
-          {
-            opacity: 1,
-            x: 0,
-            scale: 1,
-            duration: 1,
-            ease: "expo.out",
-            scrollTrigger: {
-              trigger: item,
-              start: "top 85%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        )
-
-        const dot = item.querySelector('.timeline-dot')
-        if (dot) {
-          gsap.fromTo(dot,
-            { backgroundColor: dotIdle, borderColor: dotBorder, boxShadow: "none" },
-            {
-              backgroundColor: accent,
-              borderColor: accent,
-              boxShadow: `0 0 18px ${accent}`,
-              duration: 0.3,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: item,
-                start: "top center",
-                toggleActions: "play none none reverse"
-              }
-            }
-          )
-        }
-      })
-
-      gsap.fromTo('.timeline-line',
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: "none",
-          transformOrigin: "top left",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top center",
-            end: "bottom center",
-            scrub: true,
-          }
-        }
-      )
-    })
-
-    return () => ctx.revert()
-  }, [theme])
-
   return (
-    <section ref={containerRef} className="relative min-h-screen py-32 bg-zinc-950 text-white px-6 md:px-12 lg:px-24 overflow-hidden">
-      <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-red-500/[0.03] rounded-full blur-[150px] pointer-events-none" />
+    <section id="experience" className="relative border-t border-paper-100/10 py-20 md:py-28">
+      <div className="container-page">
+        <SectionHeader
+          index={section.sectionIndex}
+          title={section.sectionTitle}
+          meta={`Tracking no. ${content.hero.tracking}`}
+          className="text-graphite-300"
+        />
 
-      <div className="max-w-5xl mx-auto space-y-20">
-
-        <div className="space-y-4">
-          <h2 className="text-zinc-500 font-mono tracking-widest uppercase text-sm">
-            {contentData.experienceSection.sectionSubtitle}
+        <div className="mt-10 grid gap-8 md:grid-cols-12 md:items-end">
+          <h2 className="type-display text-[clamp(3.25rem,8.6vw,8.25rem)] md:col-span-8">
+            <span data-reveal="line">
+              <span>{section.headline}</span>
+            </span>
           </h2>
-          <h3 className="text-4xl md:text-6xl font-light">{contentData.experienceSection.title}</h3>
-          <p className="text-zinc-500 text-lg font-light max-w-lg">A timeline of roles that shaped my craft — from teaching fundamentals to architecting enterprise solutions.</p>
+          <div className="md:col-span-4 md:pb-2" data-reveal style={revealDelay(120)}>
+            <p className="type-serif text-[clamp(1.6rem,2.4vw,2.2rem)] leading-tight text-signal">{section.accent}</p>
+            <p className="mt-3 leading-relaxed text-graphite-300">{section.intro}</p>
+          </div>
         </div>
 
-        <div className="relative border-l-2 border-zinc-800/50 ml-4 md:ml-8 pl-8 md:pl-16 space-y-16">
-          <div className="timeline-line absolute top-0 left-[-1px] w-[2px] h-full bg-gradient-to-b from-red-500 via-red-500 to-red-500/20 origin-top z-0" />
+        <div
+          className="mt-12 grid gap-3 border border-paper-100/15 px-5 py-4 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-8"
+          data-reveal
+        >
+          <span className="type-label text-graphite-400">{section.statusLabel}</span>
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-paper-100">
+            <StatusDot />
+            <span className="type-label">{section.status}</span>
+            <span className="text-graphite-300">
+              {current.role} — {current.company}
+            </span>
+          </p>
+          <span className="type-label text-graphite-400">{experience.length} scans</span>
+        </div>
 
-          {experienceData.map((exp, i) => (
-            <div key={i} className="exp-item relative group">
-              <div className="timeline-dot absolute top-6 -left-[45px] md:-left-[77px] w-5 h-5 rounded-full bg-zinc-900 border-2 border-zinc-700 z-10 ring-4 ring-zinc-950" />
+        <ol className="relative mt-14">
+          {/* Route line: grey track, red progress drawn by scroll where supported */}
+          <span aria-hidden className="absolute top-3 bottom-3 left-[7px] w-px bg-paper-100/15" />
+          <span aria-hidden className="route-progress absolute top-3 bottom-3 left-[7px] w-px bg-signal" />
 
-              <motion.div
-                className="relative p-6 md:p-8 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-red-500/20 transition-all duration-500 group overflow-hidden"
-                whileHover={{ y: -2, transition: { duration: 0.2 } }}
+          {experience.map((stop, i) => (
+            <li
+              key={`${stop.role}-${stop.year}`}
+              data-reveal
+              style={revealDelay(i * 60)}
+              className="relative grid gap-3 pb-14 pl-12 last:pb-0 md:grid-cols-[15rem_minmax(0,1fr)] md:gap-10 md:pl-16"
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  'absolute top-[0.35rem] left-0 flex h-[15px] w-[15px] items-center justify-center rounded-full border-2',
+                  i === 0 ? 'border-signal bg-signal' : 'border-paper-100/40 bg-graphite-950'
+                )}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                {i === 0 && <span className="status-ping absolute inset-0 rounded-full bg-signal" />}
+              </span>
 
-                <div className="relative">
-                  <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-start md:items-center justify-between mb-4">
-                    <h4 className="text-2xl md:text-3xl font-bold text-zinc-100 tracking-tight">{exp.role}</h4>
-                    <div className="text-red-400 font-mono text-sm tracking-wider bg-red-500/10 px-4 py-1.5 rounded-full border border-red-500/20 whitespace-nowrap shrink-0">
-                      {exp.year}
-                    </div>
-                  </div>
+              <div className="space-y-1.5">
+                <p className={cn('type-label', i === 0 ? 'text-signal' : 'text-graphite-400')}>{stopLabel(i)}</p>
+                <p className="type-label text-paper-100 tabular-nums">{stop.year}</p>
+              </div>
 
-                  <h5 className="text-lg text-zinc-500 font-medium mb-5 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500/50 inline-block" />
-                    {exp.company}
-                  </h5>
-
-                  <p className="text-base md:text-lg text-zinc-400 font-light max-w-2xl leading-relaxed">
-                    {exp.desc}
-                  </p>
-                </div>
-              </motion.div>
-            </div>
+              <div>
+                <h3 className="type-display text-[2.1rem] md:text-[2.75rem]">{stop.role}</h3>
+                <p className="mt-2 text-graphite-300">{stop.company}</p>
+                <p className="mt-4 max-w-2xl leading-relaxed text-graphite-400 md:text-lg">{stop.desc}</p>
+              </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   )

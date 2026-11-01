@@ -1,82 +1,76 @@
-# React + TypeScript + Vite
+# Vann — portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal site of Justine Donovan (Vann). Industrial-editorial design ("Shipped"),
+prerendered static pages, and two real-time 3D pieces built with three.js: the
+extruded **V monogram** in the hero and **the box** — a shipping carton with a
+project on each face that you can drag, spin and open.
 
-Currently, two official plugins are available:
+Built performance-first:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Static HTML for every page.** A build-time prerender step (React
+  `renderToString`) writes the markup, so content paints before any JavaScript
+  runs; the client then hydrates. The 404 page ships no JS at all.
+- **No animation libraries.** Reveals are one IntersectionObserver plus CSS
+  transitions; marquees and the experience route line are pure CSS.
+- **3D loads last and idles at zero.** three.js is a separate lazy chunk that is
+  only fetched after the visitor first interacts. Each scene renders on demand:
+  when nothing moves, or the canvas is off-screen, no frames are drawn.
+- **Small assets.** Self-hosted variable fonts (one preloaded), AVIF/WebP
+  screenshots with intrinsic sizes, and icons served from a single SVG sprite
+  instead of JavaScript.
 
-## React Compiler
+## Scripts
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server at http://localhost:5173 (pages render client-side) |
+| `npm run build` | Icon sprite → type-check → client build → SSR build → prerender into `dist/` |
+| `npm run preview` | Serves `dist/` like Vercel does (redirects, 404 page) |
+| `npm run check:budget` | Fails if any bundle, image or font grows past its budget |
+| `npm run images` | Optimises screenshots in `assets/projects/` (see below) |
+| `npm run sprite` | Rebuilds the icon sprite from `src/data/icons.json` |
+| `npm run icons` | Regenerates the favicons from `src/data/monogram.json` |
+| `npm run lint` | ESLint |
 
-Note: This will impact Vite dev & build performances.
+## Editing content
 
-## Expanding the ESLint configuration
+All copy lives in `src/data/`:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- `content.json` — every heading, label and paragraph, plus page titles and
+  descriptions (`meta`). Set `meta.siteUrl` once the domain is final to emit
+  canonical and Open Graph URLs.
+- `projects.json` — the projects. The first five with `"featured": true` go on
+  the faces of the 3D box (topped up from the rest); the sixth face is the
+  archive label. Every project is listed on `/projects/`.
+- `experience.json`, `skills.json` — the tracking history and the toolbox.
+- `icons.json` — which icon each tech name or skill uses (react-icons names).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Adding a project screenshot
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Save it as `assets/projects/<slug>.png` (or `.jpg`/`.webp`), where `<slug>`
+   matches the project's `slug` in `projects.json`.
+2. Run `npm run images`. This writes AVIF + WebP files to `public/img/projects/`
+   and updates `src/data/images.json`; commit both.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Projects without a screenshot get a typographic placeholder — `hr-kpi` currently
+has none.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 3D notes
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `src/three/Stage.ts` — renderer, render-on-demand loop, adaptive resolution.
+- `src/three/capabilities.ts` — picks a tier per device (`off` / `low` / `high`).
+  Devices without hardware WebGL2, with Save-Data on, or with very little memory
+  get the static poster instead, which works the same way (← → buttons, case files).
+- `src/three/scenes/monogram.ts`, `src/three/scenes/projectCube.ts` — the scenes.
+  Box face textures are drawn on a canvas at runtime (`src/three/textures/`).
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+URL flags for testing: `?debug3d` (fps / draw-call overlay; a scene at rest
+should read 0 fps), `?no3d` (force the fallback), `?force3d`, `?motion=reduce`.
 
 ## CI/CD to Vercel (Auto Deploy on Push)
 
 This repo includes GitHub Actions workflow at `.github/workflows/deploy-vercel.yml`.
+It builds the site, runs the performance budget, then deploys.
 
 ### Behavior
 - Push to `main` or `master`: deploys to Vercel Production.

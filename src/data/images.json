@@ -1,0 +1,41 @@
+{
+    "huawei-portfolio": {
+        "width": 1900,
+        "height": 916,
+        "avif": {
+            "640": "huawei-portfolio-640.40921541.avif",
+            "1280": "huawei-portfolio-1280.40921541.avif"
+        },
+        "webp": {
+            "640": "huawei-portfolio-640.40921541.webp",
+            "1280": "huawei-portfolio-1280.40921541.webp"
+        },
+        "placeholder": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAACQBACdASoYAAwAPu1kqk2ppaQiMAgBMB2JbACdMoR4T5WAVy622qAzIHofzAAA/hZ12dk27MV7BBvlXBVA/cHtCa55eGRUwq7cr+kdKenbtNWGzLSd7xn6zRJsktDkn+zQBnG1feloge2Z9ZpKKOR/u1giCfNR8WHa3FRLLVQ7ic6KnKlxAAAA"
+    },
+    "lippo-cms": {
+        "width": 1899,
+        "height": 913,
+        "avif": {
+            "640": "lippo-cms-640.fde7aef1.avif",
+            "1280": "lippo-cms-1280.fde7aef1.avif"
+        },
+        "webp": {
+            "640": "lippo-cms-640.fde7aef1.webp",
+            "1280": "lippo-cms-1280.fde7aef1.webp"
+        },
+        "placeholder": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAADwAwCdASoYAAwAPu1kqU4ppaOiMAgBMB2JQBhQA+ys8aTx2yOwMbYAAP7v4u5zBw/84fR9+tsXUGfG+0M2BkMGXa9KOMngi92IWIP/ln3XqJtoa5tfAQvFF5RhLIx5mkG/dnBxz0pP1ba+3P/1SkxKcKbc1QVZaw5QlZ8K/E/L2mwA"
+    },
+    "styles-member-app": {
+        "width": 1080,
+        "height": 1080,
+        "avif": {
+            "640": "styles-member-app-640.853956bb.avif",
+            "1080": "styles-member-app-1080.853956bb.avif"
+        },
+        "webp": {
+            "640": "styles-member-app-640.853956bb.webp",
+            "1080": "styles-member-app-1080.853956bb.webp"
+        },
+        "placeholder": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAADQAwCdASoYABgAPu1qrE8ppiQiMBgIATAdiWIAtOgQ7+Biyi2o0sAA/rh3dIGPeg1eKL5e3+M20MM5Ub847P0vBDegdSP/8bx/ku/pBUoR1I/MNMh8LKokpg4HpCzrBT2tF7c2NJwAAA=="
+    }
+}

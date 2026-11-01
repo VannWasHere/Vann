@@ -1,127 +1,162 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { FaWhatsapp, FaEnvelope, FaCheck, FaGithub, FaLinkedin } from 'react-icons/fa'
-import contentData from '../data/content.json'
+import content from '../data/content.json'
+import Barcode from '../components/Barcode'
+import CopyEmail from '../components/CopyEmail'
+import SectionHeader from '../components/SectionHeader'
+import { Arrow, MonogramMark } from '../components/Glyphs'
+import { UiIcon } from '../components/Icon'
+import { revealDelay } from '../lib/reveal'
+
+const { contact, footer, hero } = content
+
+// "Ready to innovate?" → last word on its own line
+const words = contact.title.split(' ')
+const titleLines = [words.slice(0, -1).join(' '), words.at(-1) ?? '']
+
+function PostageStamp() {
+  return (
+    <div className="drop-shadow-[0_1px_1.5px_rgb(14_14_12/0.35)]">
+      <div className="perforated w-32 bg-paper-50">
+        <div className="flex aspect-[4/5] flex-col items-center justify-between bg-graphite-900 px-2 py-3 text-paper-100">
+          <span className="type-label text-[0.6rem] text-graphite-400">{hero.location}</span>
+          <MonogramMark className="h-14 w-14" />
+          <span className="type-label text-[0.6rem] text-signal">{contact.stamp}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Postmark() {
+  return (
+    <svg viewBox="0 0 200 120" aria-hidden className="w-40 text-ink/70 sm:w-48">
+      <defs>
+        <path id="postmark-ring" d="M 60 60 m -38 0 a 38 38 0 1 1 76 0 a 38 38 0 1 1 -76 0" />
+      </defs>
+      <circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="60" cy="60" r="29" fill="none" stroke="currentColor" strokeWidth="1" />
+      <text className="font-mono" fontSize="9" letterSpacing="2.4" fill="currentColor">
+        <textPath href="#postmark-ring">{`${contact.postmark.toUpperCase()} · VANN SHIPPING CO ·`}</textPath>
+      </text>
+      <text
+        x="60"
+        y="64"
+        textAnchor="middle"
+        className="font-mono"
+        fontSize="11"
+        fontWeight="700"
+        fill="currentColor"
+        suppressHydrationWarning
+      >
+        {new Date().getFullYear()}
+      </text>
+      {/* Cancellation waves */}
+      {[44, 56, 68, 80].map((y) => (
+        <path
+          key={y}
+          d={`M 112 ${y} q 11 -7 22 0 t 22 0 t 22 0 t 22 0`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        />
+      ))}
+    </svg>
+  )
+}
 
 export default function Contact() {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(contentData.contact.emailValue)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  const handleWhatsApp = () => {
-    window.open(contentData.contact.phoneLink, '_blank')
-  }
+  const rows = [
+    {
+      label: 'WhatsApp',
+      icon: <UiIcon name="whatsapp" />,
+      href: contact.phoneLink,
+      text: contact.phoneLabel,
+    },
+    {
+      label: 'GitHub',
+      icon: <UiIcon name="github" />,
+      href: footer.github,
+      text: footer.github.replace(/^https?:\/\//, ''),
+    },
+    {
+      label: 'LinkedIn',
+      icon: <UiIcon name="linkedin" />,
+      href: footer.linkedin,
+      text: footer.linkedin.replace(/^https?:\/\//, ''),
+    },
+  ]
 
   return (
-    <section id="contact" className="relative min-h-screen py-32 bg-black text-white flex items-center justify-center px-6 md:px-12 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-black to-black pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-500/[0.04] rounded-full blur-[200px] pointer-events-none" />
+    <section id="contact" className="relative overflow-hidden bg-signal py-20 text-ink md:py-28">
+      <div className="container-page">
+        <SectionHeader
+          index={contact.sectionIndex}
+          title={contact.sectionTitle}
+          meta={contact.meta}
+          className="text-ink"
+          indexClassName="text-ink"
+        />
 
-      {/* Decorative grid lines */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: 'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
-          backgroundSize: '80px 80px'
-        }}
-      />
+        <h2 className="type-display mt-10 text-[clamp(4rem,13.5vw,13.5rem)] md:mt-14">
+          {titleLines.map((line, i) => (
+            <span key={line} data-reveal="line" style={revealDelay(i * 100)}>
+              <span>{line}</span>
+            </span>
+          ))}
+        </h2>
 
-      <motion.div
-        className="relative z-10 w-full max-w-5xl mx-auto"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: 'easeOut' }}
-        viewport={{ once: true, margin: '-15%' }}
-      >
-        {/* Header */}
-        <div className="text-center mb-20">
-          <h2 className="text-zinc-500 font-mono tracking-widest uppercase text-sm mb-6">
-            {contentData.contact.sectionSubtitle}
-          </h2>
-          <h3 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white via-zinc-200 to-zinc-600">
-            {contentData.contact.title}
-          </h3>
-          <p className="text-lg md:text-xl text-zinc-500 font-light max-w-lg mx-auto mt-6">
-            {contentData.contact.description}
-          </p>
-        </div>
+        <div className="mt-12 grid grid-cols-1 gap-10 md:mt-16 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-4" data-reveal>
+            <p className="text-xl leading-relaxed md:text-2xl md:leading-relaxed">{contact.description}</p>
+            <p className="type-serif mt-6 text-3xl">{contact.signoff}</p>
+          </div>
 
-        {/* Contact Cards Grid */}
-        <div className="grid md:grid-cols-2 gap-4 md:gap-6 max-w-3xl mx-auto mb-16">
-          {/* WhatsApp Card */}
-          <motion.button
-            onClick={handleWhatsApp}
-            whileHover={{ y: -4 }}
-            className="group relative p-5 md:p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-green-500/30 text-left transition-colors duration-500 overflow-hidden"
+          {/* Postcard */}
+          <div
+            className="surface-paper shadow-[0_30px_60px_-30px_rgb(14_14_12/0.55)] lg:col-span-8"
+            data-reveal
+            style={revealDelay(120)}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            <div className="relative flex items-center gap-5">
-              <div className="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 group-hover:bg-green-500/20 transition-colors">
-                <FaWhatsapp className="text-green-400 text-xl" />
+            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_auto]">
+              <div className="min-w-0 p-6 md:p-8">
+                <p className="type-label text-ink-muted">{contact.meta}</p>
+
+                <div className="mt-5 border-b border-ink/15 pb-5">
+                  <p className="type-label mb-2 text-ink-muted">Email</p>
+                  <CopyEmail email={contact.emailValue} copyLabel={contact.copy} copiedLabel={contact.copied} />
+                </div>
+
+                <ul className="divide-y divide-ink/10">
+                  {rows.map((row) => (
+                    <li key={row.label}>
+                      <a
+                        href={row.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-4 py-3.5"
+                      >
+                        <span className="type-label w-20 shrink-0 text-ink-muted">{row.label}</span>
+                        <span className="text-lg">{row.icon}</span>
+                        <span className="min-w-0 truncate font-medium">{row.text}</span>
+                        <Arrow
+                          direction="up-right"
+                          className="ml-auto shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+
+                <Barcode value={contact.emailValue} className="mt-6 h-12 w-full max-w-sm text-ink" />
               </div>
-              <div className="min-w-0">
-                <div className="text-[10px] text-zinc-600 font-mono tracking-widest uppercase mb-1">WhatsApp</div>
-                <div className="text-zinc-200 text-base md:text-lg font-medium tracking-wide">{contentData.contact.phoneLabel}</div>
+
+              <div className="flex flex-wrap items-center justify-center gap-4 border-t border-ink/15 p-6 xl:flex-col xl:flex-nowrap xl:justify-start xl:gap-6 xl:border-t-0 xl:border-l xl:p-8">
+                <PostageStamp />
+                <Postmark />
               </div>
             </div>
-          </motion.button>
-
-          {/* Email Card */}
-          <motion.button
-            onClick={handleCopy}
-            whileHover={{ y: -4 }}
-            className="group relative p-5 md:p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-red-500/30 text-left transition-colors duration-500 overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-            <div className="relative flex items-center gap-5">
-              <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0 group-hover:bg-red-500/20 transition-colors">
-                {copied
-                  ? <FaCheck className="text-red-400 text-lg" />
-                  : <FaEnvelope className="text-red-400 text-lg" />
-                }
-              </div>
-              <div className="min-w-0">
-                <div className="text-[10px] text-zinc-600 font-mono tracking-widest uppercase mb-1">
-                  {copied ? 'Copied to Clipboard!' : 'Email — Click to Copy'}
-                </div>
-                <div className="relative overflow-hidden">
-                  <motion.div
-                    className="text-zinc-200 text-base md:text-lg font-medium tracking-wide whitespace-nowrap inline-block"
-                    animate={{ x: ['0%', '-50%'] }}
-                    transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                  >
-                    {contentData.contact.emailLabel} &nbsp; • &nbsp; {contentData.contact.emailLabel}
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-          </motion.button>
+          </div>
         </div>
-
-        {/* Social Links */}
-        <div className="flex items-center justify-center gap-4">
-          <a
-            href={contentData.footer.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-12 h-12 rounded-full border border-zinc-800 hover:border-zinc-600 flex items-center justify-center text-zinc-500 hover:text-white transition-all duration-300"
-          >
-            <FaGithub className="text-lg" />
-          </a>
-          <a
-            href={contentData.footer.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-12 h-12 rounded-full border border-zinc-800 hover:border-zinc-600 flex items-center justify-center text-zinc-500 hover:text-white transition-all duration-300"
-          >
-            <FaLinkedin className="text-lg" />
-          </a>
-        </div>
-
-      </motion.div>
+      </div>
     </section>
   )
 }
