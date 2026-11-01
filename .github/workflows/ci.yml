@@ -1,0 +1,35 @@
+name: CI
+
+# Deploys are handled by Vercel's Git integration: every push gets a Preview
+# deployment and pushes to main go to Production. This workflow is the quality
+# gate on top — it checks that the prerendered site builds and stays within
+# its performance budget (scripts/check-budget.mjs).
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (prerendered static site)
+        run: npm run build
+
+      - name: Check performance budget
+        run: npm run check:budget

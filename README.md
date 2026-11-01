@@ -67,25 +67,11 @@ has none.
 URL flags for testing: `?debug3d` (fps / draw-call overlay; a scene at rest
 should read 0 fps), `?no3d` (force the fallback), `?force3d`, `?motion=reduce`.
 
-## CI/CD to Vercel (Auto Deploy on Push)
+## Deploys and CI
 
-This repo includes GitHub Actions workflow at `.github/workflows/deploy-vercel.yml`.
-It builds the site, runs the performance budget, then deploys.
-
-### Behavior
-- Push to `main` or `master`: deploys to Vercel Production.
-- Push to any other branch: deploys a Vercel Preview.
-
-### Required GitHub Secrets
-In GitHub repository settings, add these secrets in **Settings → Secrets and variables → Actions**:
-- `VERCEL_TOKEN` (create at [Vercel Tokens](https://vercel.com/account/tokens))
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-
-You can get `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` from `.vercel/project.json` after linking the project locally:
-
-```bash
-vercel link
-```
-
-If Vercel Git Integration is also enabled in your Vercel Project settings, disable one side (either Vercel Git Integration or this GitHub Action) to avoid duplicate deployments.
+- **Deploys** come from Vercel's Git integration: every push gets a Preview
+  deployment, and pushes to `main` deploy to Production. No secrets are needed
+  in GitHub.
+- **CI** (`.github/workflows/ci.yml`) runs on every push: `npm ci`,
+  `npm run build` and `npm run check:budget`. A red check means the site no
+  longer builds or has grown past its performance budget.
