@@ -13,6 +13,7 @@ import {
 import monogram from '../../data/monogram.json'
 import { Stage, type Controller } from '../Stage'
 import { createEnvironment } from '../environment'
+import type { Capabilities } from '../capabilities'
 import type { SceneContext, SceneHandle } from '../types'
 
 export type MonogramOptions = {
@@ -80,8 +81,17 @@ const damp = (current: number, target: number, lambda: number, dt: number) =>
   MathUtils.lerp(current, target, 1 - Math.exp(-lambda * dt))
 
 export async function mount(host: HTMLElement, context: SceneContext, options: MonogramOptions): Promise<SceneHandle> {
-  const { caps } = context
-  const stage = new Stage(host, caps, { fov: 30, cameraZ: 10, onContextLost: context.onContextLost })
+  const stage = new Stage(host, context.caps, { fov: 30, cameraZ: 10, onContextLost: context.onContextLost })
+  try {
+    return await build(stage, host, context.caps, options)
+  } catch (error) {
+    // Never leave a half-built canvas (and its GL context) behind
+    stage.dispose()
+    throw error
+  }
+}
+
+async function build(stage: Stage, host: HTMLElement, caps: Capabilities, options: MonogramOptions): Promise<SceneHandle> {
   const { scene, renderer } = stage
 
   scene.environment = createEnvironment(renderer)
@@ -134,6 +144,7 @@ export async function mount(host: HTMLElement, context: SceneContext, options: M
   const tilt = { x: 0, y: 0, targetX: 0, targetY: 0 }
   const spin = { yaw: 0, pitch: 0, vYaw: 0, vPitch: 0 }
   let dragging = false
+  let pointerId = -1
   let lastPointer = { x: 0, y: 0, t: 0 }
   let floatClock = 0
   let floatAmp = 0
@@ -234,8 +245,11 @@ export async function mount(host: HTMLElement, context: SceneContext, options: M
   }
 
   const onDown = (event: PointerEvent) => {
+    // One pointer at a time (a second finger would make the logo jump), primary button only
+    if (dragging || event.button !== 0) return
     dragging = true
-    stage.canvas.setPointerCapture(event.pointerId)
+    pointerId = event.pointerId
+    stage.canvas.setPointerCapture(pointerId)
     stage.canvas.style.cursor = 'grabbing'
     lastPointer = { x: event.clientX, y: event.clientY, t: event.timeStamp }
     spin.vYaw = 0
@@ -244,7 +258,7 @@ export async function mount(host: HTMLElement, context: SceneContext, options: M
   }
 
   const onMove = (event: PointerEvent) => {
-    if (!dragging) return
+    if (!dragging || event.pointerId !== pointerId) return
     const dx = event.clientX - lastPointer.x
     const dy = event.clientY - lastPointer.y
     const dt = Math.max(1, event.timeStamp - lastPointer.t) / 1000
@@ -257,13 +271,16 @@ export async function mount(host: HTMLElement, context: SceneContext, options: M
     wake()
   }
 
+  // pointerup, pointercancel and lostpointercapture all end the drag, so a
+  // missed release can never leave the logo stuck mid-spin
   const onUp = (event: PointerEvent) => {
-    if (!dragging) return
+    if (!dragging || event.pointerId !== pointerId) return
     dragging = false
+    pointerId = -1
     stage.canvas.style.cursor = 'grab'
     if (stage.canvas.hasPointerCapture(event.pointerId)) stage.canvas.releasePointerCapture(event.pointerId)
     // A pause before letting go means no throw
-    if (event.timeStamp - lastPointer.t > 90) {
+    if (event.type !== 'pointerup' || event.timeStamp - lastPointer.t > 90) {
       spin.vYaw = 0
       spin.vPitch = 0
     }
@@ -272,19 +289,21 @@ export async function mount(host: HTMLElement, context: SceneContext, options: M
     wake()
   }
 
-  root.addEventListener('pointermove', onHover, { passive: true })
-  root.addEventListener('pointerleave', onLeave)
   stage.canvas.addEventListener('pointerdown', onDown)
   stage.canvas.addEventListener('pointermove', onMove)
   stage.canvas.addEventListener('pointerup', onUp)
   stage.canvas.addEventListener('pointercancel', onUp)
+  stage.canvas.addEventListener('lostpointercapture', onUp)
   stage.canvas.style.cursor = 'grab'
-  // Horizontal drags spin; vertical swipes still scroll the page on touch
-  stage.canvas.style.touchAction = 'pan-y'
+  // Horizontal drags spin; vertical swipes and pinch-zoom stay with the page
+  stage.canvas.style.touchAction = 'pan-y pinch-zoom'
 
   if (caps.debug) void import('../debug').then(({ attachDebug }) => attachDebug(stage, 'monogram'))
 
   await stage.start(controller)
+  // Hero-wide hover tilt only once the scene can actually draw
+  root.addEventListener('pointermove', onHover, { passive: true })
+  root.addEventListener('pointerleave', onLeave)
   wake(animateIntro ? 3 : 0.5)
 
   return {

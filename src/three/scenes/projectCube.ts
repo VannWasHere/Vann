@@ -30,6 +30,7 @@ import {
   type CubeFace,
   type Tape,
 } from '../textures/faces'
+import type { Capabilities } from '../capabilities'
 import type { SceneContext, SceneHandle } from '../types'
 
 export type { CubeFace, ProjectFace, ArchiveFace } from '../textures/faces'
@@ -37,16 +38,27 @@ export type { CubeFace, ProjectFace, ArchiveFace } from '../textures/faces'
 export type CubeOptions = {
   /** Six faces, in visiting order. */
   faces: CubeFace[]
+  /** Face shown first — whatever the poster was on when the scene mounted */
   initial: number
+  /** Turn to the next face every few seconds until the visitor takes over */
+  autoplay: boolean
   /** The face pointing at the viewer changed; `byUser` is false for autoplay. */
   onActiveChange: (index: number, byUser: boolean) => void
   /** The front face was clicked. */
   onOpen: (index: number) => void
+  /** Autoplay stopped because the visitor dragged, clicked or stepped the box */
+  onAutoplayStop: () => void
 }
 
 export type CubeHandle = SceneHandle & {
   goTo: (index: number) => void
   step: (direction: 1 | -1) => void
+  /** False under reduced motion, where the box never turns on its own */
+  readonly canAutoplay: boolean
+  isAutoplaying: () => boolean
+  setAutoplay: (enabled: boolean) => void
+  /** Hold autoplay while focus is inside the section, without turning it off */
+  setPaused: (paused: boolean) => void
 }
 
 // BoxGeometry material groups: 0 +x, 1 -x, 2 +y, 3 -y, 4 +z, 5 -z.
@@ -134,11 +146,21 @@ async function buildMaterials(stage: Stage, faces: CubeFace[], size: number, ani
 }
 
 export async function mount(host: HTMLElement, context: SceneContext, options: CubeOptions): Promise<CubeHandle> {
-  const { caps } = context
-  const { faces } = options
-  if (faces.length !== VISIT.length) throw new Error(`The box needs ${VISIT.length} faces, got ${faces.length}`)
+  if (options.faces.length !== VISIT.length) {
+    throw new Error(`The box needs ${VISIT.length} faces, got ${options.faces.length}`)
+  }
+  const stage = new Stage(host, context.caps, { fov: 26, cameraZ: 10, onContextLost: context.onContextLost })
+  try {
+    return await build(stage, context.caps, options)
+  } catch (error) {
+    // Never leave a half-built canvas (and its GL context) behind
+    stage.dispose()
+    throw error
+  }
+}
 
-  const stage = new Stage(host, caps, { fov: 26, cameraZ: 10, onContextLost: context.onContextLost })
+async function build(stage: Stage, caps: Capabilities, options: CubeOptions): Promise<CubeHandle> {
+  const { faces } = options
   const { scene, camera } = stage
 
   scene.environment = createEnvironment(stage.renderer)
@@ -177,7 +199,10 @@ export async function mount(host: HTMLElement, context: SceneContext, options: C
   let awakeUntil = 0
   let now = 0
 
-  let autoplay = !caps.reducedMotion
+  const canAutoplay = !caps.reducedMotion
+  let autoplay = canAutoplay && options.autoplay
+  let paused = false
+  let ready = false
   let autoTimer = 0
   let hovering = false
 
@@ -186,14 +211,17 @@ export async function mount(host: HTMLElement, context: SceneContext, options: C
     stage.invalidate()
   }
 
+  /** The visitor took over: autoplay is off for good, and the page is told. */
   const stopAutoplay = () => {
-    autoplay = false
     window.clearTimeout(autoTimer)
+    if (!autoplay) return
+    autoplay = false
+    options.onAutoplayStop()
   }
 
   const scheduleAutoplay = () => {
     window.clearTimeout(autoTimer)
-    if (!autoplay || hovering || !stage.isVisible || mode !== 'idle') return
+    if (!ready || !autoplay || paused || hovering || !stage.isVisible || mode !== 'idle') return
     autoTimer = window.setTimeout(() => goTo((active + 1) % faces.length, false), AUTOPLAY_MS)
   }
 
@@ -295,6 +323,9 @@ export async function mount(host: HTMLElement, context: SceneContext, options: C
   const { canvas } = stage
   let downAt = { x: 0, y: 0, t: 0 }
   let last = { x: 0, y: 0, t: 0 }
+  // A press only becomes a drag once it travels past CLICK_SLOP, so taps and
+  // scrolls that merely start on the box don't disturb it
+  let pressed = false
   let moved = false
   let pointerId = -1
 
@@ -306,21 +337,18 @@ export async function mount(host: HTMLElement, context: SceneContext, options: C
   }
 
   const onDown = (event: PointerEvent) => {
-    if (event.button !== 0) return
+    if (event.button !== 0 || pressed) return
+    pressed = true
+    moved = false
     pointerId = event.pointerId
     canvas.setPointerCapture(pointerId)
     downAt = last = { x: event.clientX, y: event.clientY, t: event.timeStamp }
-    moved = false
-    mode = 'drag'
-    omega.set(0, 0, 0)
-    stopAutoplay()
-    wake()
   }
 
   const onMove = (event: PointerEvent) => {
-    if (mode !== 'drag' || event.pointerId !== pointerId) {
+    if (!pressed || event.pointerId !== pointerId) {
       // Hover: lean towards the pointer, show a grab cursor over the box
-      if (event.pointerType === 'mouse') {
+      if (event.pointerType === 'mouse' && !pressed) {
         stage.toNdc(event, ndc)
         parallax.targetX = -ndc.y * 0.07
         parallax.targetY = ndc.x * 0.1
@@ -330,14 +358,18 @@ export async function mount(host: HTMLElement, context: SceneContext, options: C
       return
     }
 
-    const dx = event.clientX - last.x
-    const dy = event.clientY - last.y
-    if (!moved && Math.hypot(event.clientX - downAt.x, event.clientY - downAt.y) > CLICK_SLOP) {
+    if (!moved) {
+      if (Math.hypot(event.clientX - downAt.x, event.clientY - downAt.y) <= CLICK_SLOP) return
+      // A real drag: take over from whatever the box was doing
       moved = true
+      mode = 'drag'
+      omega.set(0, 0, 0)
+      stopAutoplay()
       canvas.style.cursor = 'grabbing'
     }
-    if (!moved) return
 
+    const dx = event.clientX - last.x
+    const dy = event.clientY - last.y
     const distance = Math.hypot(dx, dy)
     if (distance > 0) {
       const angle = (distance / Math.min(stage.width, stage.height)) * DRAG_SPEED
@@ -352,28 +384,43 @@ export async function mount(host: HTMLElement, context: SceneContext, options: C
     wake()
   }
 
-  const onUp = (event: PointerEvent) => {
-    if (mode !== 'drag' || event.pointerId !== pointerId) return
+  const endPress = () => {
+    pressed = false
     if (canvas.hasPointerCapture(pointerId)) canvas.releasePointerCapture(pointerId)
     pointerId = -1
     canvas.style.cursor = 'grab'
+  }
 
-    if (!moved && event.type === 'pointerup') {
-      const index = faceAt(event)
-      // Opening needs the face squarely presented; mid-turn clicks just finish the turn
-      const aligned = cube.quaternion.angleTo(target) < 0.05
-      if (index >= 0 && index === active && aligned) {
-        mode = 'snap'
-        press = 0.965
-        options.onOpen(index)
-      } else if (index >= 0) goTo(index)
-      else settleOnNearest()
+  const onUp = (event: PointerEvent) => {
+    if (!pressed || event.pointerId !== pointerId) return
+    endPress()
+
+    if (moved) {
+      // Holding still before letting go means no throw
+      if (event.timeStamp - last.t > 90) omega.set(0, 0, 0)
+      mode = 'inertia'
       wake()
       return
     }
 
-    // Holding still before letting go means no throw
-    if (event.timeStamp - last.t > 90) omega.set(0, 0, 0)
+    // A tap or click
+    const index = faceAt(event)
+    if (index < 0) return
+    // Opening needs the face squarely presented; mid-turn clicks just finish the turn
+    if (index === active && cube.quaternion.angleTo(target) < 0.05) {
+      stopAutoplay()
+      press = 0.965
+      options.onOpen(index)
+    } else goTo(index)
+    wake()
+  }
+
+  // The browser took the gesture (a scroll that started on the box) or capture
+  // was lost: a bare press changes nothing, a drag in progress just settles
+  const onCancel = (event: PointerEvent) => {
+    if (!pressed || event.pointerId !== pointerId) return
+    endPress()
+    if (!moved) return
     mode = 'inertia'
     wake()
   }
@@ -394,11 +441,12 @@ export async function mount(host: HTMLElement, context: SceneContext, options: C
   canvas.addEventListener('pointerdown', onDown)
   canvas.addEventListener('pointermove', onMove)
   canvas.addEventListener('pointerup', onUp)
-  canvas.addEventListener('pointercancel', onUp)
+  canvas.addEventListener('pointercancel', onCancel)
+  canvas.addEventListener('lostpointercapture', onCancel)
   canvas.addEventListener('pointerenter', onEnter)
   canvas.addEventListener('pointerleave', onLeave)
-  // Horizontal swipes spin the box; vertical swipes still scroll the page
-  canvas.style.touchAction = 'pan-y'
+  // Horizontal swipes spin the box; vertical swipes and pinch-zoom stay with the page
+  canvas.style.touchAction = 'pan-y pinch-zoom'
 
   stage.onVisibility = (visible) => {
     if (visible) scheduleAutoplay()
@@ -408,14 +456,25 @@ export async function mount(host: HTMLElement, context: SceneContext, options: C
   if (caps.debug) void import('../debug').then(({ attachDebug }) => attachDebug(stage, 'cube'))
 
   await stage.start(controller)
+  ready = true
   wake(1.5)
-  // The first visibility report can arrive while textures are still being
-  // drawn (before onVisibility was attached), so kick autoplay off here too
   scheduleAutoplay()
 
   return {
     goTo: (index) => goTo(index),
     step: (direction) => goTo(active + direction),
+    canAutoplay,
+    isAutoplaying: () => autoplay,
+    setAutoplay(enabled) {
+      autoplay = canAutoplay && enabled
+      if (autoplay) scheduleAutoplay()
+      else window.clearTimeout(autoTimer)
+    },
+    setPaused(next) {
+      paused = next
+      if (paused) window.clearTimeout(autoTimer)
+      else scheduleAutoplay()
+    },
     dispose() {
       window.clearTimeout(autoTimer)
       stage.dispose()

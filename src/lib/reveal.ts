@@ -13,7 +13,8 @@ export const revealDelay = (ms: number) => ({ '--reveal-delay': `${ms}ms` }) as 
 export function useReveal() {
   useEffect(() => {
     const elements = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'))
-    const fold = window.innerHeight * 0.92
+    // Anything already peeking into the viewport stays put — hiding it would flicker
+    const fold = window.innerHeight
 
     const observer = new IntersectionObserver(
       (entries) => {

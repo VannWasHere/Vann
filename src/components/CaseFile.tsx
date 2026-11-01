@@ -10,7 +10,7 @@ import { Arrow } from './Glyphs'
 type CaseFileProps = {
   project: Project | null
   /** "PKG 02/05" for projects on the box, otherwise the archive */
-  reference: string
+  referenceFor: (project: Project) => string
   onClose: () => void
 }
 
@@ -20,7 +20,7 @@ const work = content.work
  * Project details in a native modal <dialog>: focus trap, Esc to close and
  * focus return come from the browser. Styled as a paper case file.
  */
-export default function CaseFile({ project, reference, onClose }: CaseFileProps) {
+export default function CaseFile({ project, referenceFor, onClose }: CaseFileProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   // Keep the last project on screen while the dialog animates closed
   const [shown, setShown] = useState(project)
@@ -48,7 +48,8 @@ export default function CaseFile({ project, reference, onClose }: CaseFileProps)
         <article className="surface-paper border border-ink/20">
           <header className="type-label flex items-center gap-4 border-b border-ink/15 px-5 py-3.5 md:px-7">
             <span className="text-signal-700">Case file</span>
-            <span className="text-ink-muted">{reference}</span>
+            {/* From `shown`, so the label holds steady while the dialog animates closed */}
+            <span className="text-ink-muted">{referenceFor(shown)}</span>
             <span className="ml-auto hidden text-ink-muted tabular-nums sm:inline">{trackingCode(shown)}</span>
             <form method="dialog" className="ml-auto sm:ml-0">
               <button

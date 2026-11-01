@@ -95,6 +95,8 @@
   html {
     color-scheme: dark;
     scroll-behavior: smooth;
+    /* Keeps the layout from shifting when the case file locks scrolling */
+    scrollbar-gutter: stable;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
   }
@@ -390,6 +392,15 @@ dialog.case-file[open]::backdrop {
   width: 100%;
   height: 100%;
   outline: none;
+}
+
+/* Printing shouldn't depend on having scrolled past everything first */
+@media print {
+  [data-reveal].reveal-pending,
+  [data-reveal='line'].reveal-pending > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

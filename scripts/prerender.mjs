@@ -37,9 +37,9 @@ for (const page of PAGES) {
 
   if (!html.includes('<!--app-html-->')) throw new Error(`[prerender] ${page.file} has no <!--app-html--> marker`)
 
-  html = html
-    .replace('<!--app-html-->', render(page.id))
-    .replace('<!--preload-->', preload)
+  // Function replacers, so a "$&" or "$'" in the copy is inserted literally
+  const markup = render(page.id)
+  html = html.replace('<!--app-html-->', () => markup).replace('<!--preload-->', () => preload)
 
   if (page.staticOnly) {
     html = html

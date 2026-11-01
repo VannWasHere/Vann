@@ -68,6 +68,12 @@ const SLIDES: Slide[] = [
 const cubeIndexOf = (project: Project) =>
   SLIDES.findIndex((slide) => slide.kind === 'project' && slide.project === project)
 
+/** "PKG 02/05" for projects on the box, "Archive" for the rest */
+function referenceFor(project: Project) {
+  const slide = SLIDES[cubeIndexOf(project)]
+  return slide?.kind === 'project' ? slide.face.pkg : 'Archive'
+}
+
 function caption(slide: Slide, index: number) {
   if (slide.kind === 'archive') {
     return {
@@ -100,14 +106,14 @@ function CubePoster({ slide, onOpen }: { slide: Slide; onOpen: () => void }) {
 export default function Work() {
   const [active, setActive] = useState(0)
   const [announce, setAnnounce] = useState(false)
+  // null until the live box reports in — and under reduced motion, where it never auto-turns
+  const [autoTurn, setAutoTurn] = useState<boolean | null>(null)
   const [openSlug, setOpenSlug] = useState<string | null>(null)
   const cube = useRef<CubeHandle | null>(null)
 
   const slide = SLIDES[active]
   const text = caption(slide, active)
   const openProject = projects.find((project) => project.slug === openSlug) ?? null
-  const openOnBox = openProject ? SLIDES[cubeIndexOf(openProject)] : undefined
-  const reference = openOnBox?.kind === 'project' ? openOnBox.face.pkg : 'Archive'
 
   // Shared by the 3D box (front-face click) and the page controls
   const openSlide = (index: number) => {
@@ -118,12 +124,24 @@ export default function Work() {
 
   const cubeOptions: CubeOptions = {
     faces: SLIDES.map((s) => s.face),
-    initial: 0,
+    // Read when the box mounts: it starts on the poster's face, and skips
+    // autoplay if the visitor has already been clicking through
+    initial: active,
+    autoplay: !announce,
     onActiveChange: (index, byUser) => {
       setActive(index)
       if (byUser) setAnnounce(true)
     },
     onOpen: openSlide,
+    onAutoplayStop: () => setAutoTurn((current) => (current === null ? null : false)),
+  }
+
+  // WAI carousel pattern: the toggle always wins, even while focus is inside
+  const toggleAutoTurn = () => {
+    const next = !autoTurn
+    cube.current?.setAutoplay(next)
+    if (next) cube.current?.setPaused(false)
+    setAutoTurn(next)
   }
 
   const show = (index: number) => {
@@ -154,7 +172,15 @@ export default function Work() {
   }
 
   return (
-    <section id="work" className="relative border-t border-paper-100/10 py-20 md:py-28">
+    <section
+      id="work"
+      className="relative border-t border-paper-100/10 py-20 md:py-28"
+      // Keyboard and screen-reader users get a still box while they're in here
+      onFocus={() => cube.current?.setPaused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) cube.current?.setPaused(false)
+      }}
+    >
       <div className="container-page">
         <SectionHeader
           index={work.index}
@@ -199,14 +225,27 @@ export default function Work() {
             options={cubeOptions}
             onReady={(handle) => {
               cube.current = handle
+              setAutoTurn(handle?.canAutoplay ? handle.isAutoplaying() : null)
             }}
             className="absolute inset-0"
             poster={<CubePoster slide={slide} onOpen={() => open(active)} />}
           />
 
-          <div aria-hidden className="type-label pointer-events-none absolute inset-0 p-4 text-graphite-400 md:p-5">
-            <span className="absolute top-4 left-4 md:top-5 md:left-5">{work.figure}</span>
-            <span className="absolute top-4 right-4 flex gap-1.5 md:top-5 md:right-5">
+          <div className="absolute top-3 right-3 flex items-center gap-3 md:top-4 md:right-4">
+            {autoTurn !== null && (
+              <button
+                type="button"
+                onClick={toggleAutoTurn}
+                aria-label={autoTurn ? work.autoPauseLabel : work.autoResumeLabel}
+                className="type-label flex items-center gap-2 border border-paper-100/15 bg-graphite-950/80 px-2.5 py-1.5 text-graphite-300 transition-colors hover:border-paper-100/40 hover:text-paper-100"
+              >
+                <svg viewBox="0 0 10 10" aria-hidden className="h-2.5 w-2.5 fill-current">
+                  {autoTurn ? <path d="M1.5 1h2.5v8H1.5zM6 1h2.5v8H6z" /> : <path d="M2 1l7 4-7 4z" />}
+                </svg>
+                {autoTurn ? work.autoPause : work.autoResume}
+              </button>
+            )}
+            <span aria-hidden className="flex gap-1.5">
               {SLIDES.map((_, i) => (
                 <span
                   key={i}
@@ -214,6 +253,10 @@ export default function Work() {
                 />
               ))}
             </span>
+          </div>
+
+          <div aria-hidden className="type-label pointer-events-none absolute inset-0 p-4 text-graphite-400 md:p-5">
+            <span className="absolute top-4 left-4 md:top-5 md:left-5">{work.figure}</span>
             <span className="absolute bottom-4 left-4 md:bottom-5 md:left-5">{work.hint}</span>
             <span className="absolute right-4 bottom-4 hidden items-center gap-1.5 md:right-5 md:bottom-5 md:flex">
               <Arrow direction="left" />
@@ -256,6 +299,8 @@ export default function Work() {
             <button
               type="button"
               onClick={() => open(active)}
+              // The visible label is the same for every face; the name says which one
+              aria-label={`${slide.kind === 'archive' ? work.openArchive : work.openCase}: ${text.title}`}
               className="type-label group inline-flex h-12 w-full items-center justify-between gap-3 bg-paper-100 px-5 whitespace-nowrap text-ink transition-colors hover:bg-signal sm:ml-2 sm:w-auto"
             >
               {slide.kind === 'archive' ? work.openArchive : work.openCase}
@@ -321,7 +366,7 @@ export default function Work() {
         </div>
       </div>
 
-      <CaseFile project={openProject} reference={reference} onClose={() => setOpenSlug(null)} />
+      <CaseFile project={openProject} referenceFor={referenceFor} onClose={() => setOpenSlug(null)} />
     </section>
   )
 }

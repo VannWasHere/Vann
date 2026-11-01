@@ -60,6 +60,10 @@ export default function ThreeStage<TOptions, THandle extends SceneHandle>({
             onContextLost: () => {
               setLive(false)
               notify(null)
+              // Tear the scene down (timers, observers, listeners) so nothing
+              // keeps running headless behind the poster
+              handle?.dispose()
+              handle = null
             },
           },
           readOptions()

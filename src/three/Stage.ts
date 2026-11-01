@@ -31,9 +31,13 @@ type StageOptions = {
   onContextLost: () => void
 }
 
-/** Below ~45 fps for this many frames in a row drops the resolution a step. */
-const SLOW_FRAME = 1 / 45
+// Frames slower than ~24 fps count against the GPU. A steady 30 Hz cap (iOS Low
+// Power Mode, Chrome Energy Saver) stays above this, so it never costs sharpness.
+const SLOW_FRAME = 1 / 24
 const SLOW_STREAK = 40
+// A long run of fast frames wins the resolution back
+const FAST_FRAME = 1 / 50
+const RECOVER_STREAK = 240
 const MIN_DPR_SCALE = 0.6
 
 /**
@@ -61,10 +65,15 @@ export class Stage {
   private last = 0
   private elapsed = 0
   private visible = false
+  /** Shaders are compiled and the first frame is drawn; rendering is allowed. */
+  private started = false
+  private lost = false
   private disposed = false
   private dprScale = 1
   private slowFrames = 0
+  private fastFrames = 0
   private readonly caps: Capabilities
+  private readonly whenLost: Promise<void>
   private readonly resizeObserver: ResizeObserver
   private readonly intersectionObserver: IntersectionObserver
 
@@ -79,10 +88,16 @@ export class Stage {
     this.renderer.debug.checkShaderErrors = import.meta.env.DEV
 
     this.canvas = this.renderer.domElement
-    this.canvas.addEventListener('webglcontextlost', (event) => {
-      event.preventDefault()
-      this.stop()
-      options.onContextLost()
+    this.whenLost = new Promise((resolve) => {
+      this.canvas.addEventListener('webglcontextlost', (event) => {
+        event.preventDefault()
+        // dispose() drops the context on purpose; there is nothing to report then
+        if (this.disposed) return
+        this.lost = true
+        this.stop()
+        resolve()
+        options.onContextLost()
+      })
     })
     host.appendChild(this.canvas)
 
@@ -95,7 +110,9 @@ export class Stage {
     this.resizeObserver.observe(host)
 
     this.intersectionObserver = new IntersectionObserver(
-      ([entry]) => {
+      (entries) => {
+        // Entries can queue up during a fast scroll; only the newest one is current
+        const entry = entries[entries.length - 1]
         this.visible = entry.isIntersecting
         this.onVisibility?.(this.visible)
         if (this.visible) this.invalidate()
@@ -121,8 +138,12 @@ export class Stage {
   async start(controller: Controller) {
     this.controller = controller
     controller.resize?.(this.width, this.height)
-    await this.renderer.compileAsync(this.scene, this.camera)
+    // Resize/visibility/pointer events can't render before this resolves, so a
+    // half-compiled program never blocks the main thread
+    await Promise.race([this.renderer.compileAsync(this.scene, this.camera), this.whenLost])
+    if (this.lost) throw new Error('WebGL context lost while compiling shaders')
     if (this.disposed) return
+    this.started = true
     controller.update(0, 0)
     this.renderer.render(this.scene, this.camera)
     this.invalidate()
@@ -130,7 +151,7 @@ export class Stage {
 
   /** Request at least one more frame. */
   invalidate() {
-    if (this.frame || this.disposed || !this.controller) return
+    if (this.frame || this.disposed || !this.started) return
     this.frame = requestAnimationFrame(this.tick)
   }
 
@@ -169,6 +190,8 @@ export class Stage {
     })
     this.scene.environment?.dispose()
     this.renderer.dispose()
+    // Hand the GL context back now rather than whenever GC gets to it
+    this.renderer.forceContextLoss()
     this.canvas.remove()
   }
 
@@ -195,22 +218,32 @@ export class Stage {
     this.camera.aspect = this.width / this.height
     this.camera.updateProjectionMatrix()
     this.controller?.resize?.(this.width, this.height)
+    // setSize() clears the drawing buffer; redraw right away so a resize (or the
+    // scrollbar toggling) never shows a blank frame
+    if (this.started && !this.disposed && !this.lost) this.renderer.render(this.scene, this.camera)
     this.invalidate()
   }
 
-  /** Adaptive resolution: trade sharpness for frame rate on slow GPUs. */
+  /** Adaptive resolution: trade sharpness for frame rate on slow GPUs, and back. */
   private adapt(dt: number, moving: boolean) {
     if (!moving) return
-    this.slowFrames = dt > SLOW_FRAME ? this.slowFrames + 1 : Math.max(0, this.slowFrames - 2)
-    if (this.slowFrames < SLOW_STREAK || this.dprScale <= MIN_DPR_SCALE) return
-    this.slowFrames = 0
-    this.dprScale = Math.max(MIN_DPR_SCALE, this.dprScale - 0.15)
-    this.resize(this.width, this.height)
+    this.slowFrames = dt > SLOW_FRAME ? this.slowFrames + 1 : Math.max(0, this.slowFrames - 1)
+    this.fastFrames = dt < FAST_FRAME ? this.fastFrames + 1 : 0
+
+    if (this.slowFrames >= SLOW_STREAK && this.dprScale > MIN_DPR_SCALE) {
+      this.slowFrames = 0
+      this.dprScale = Math.max(MIN_DPR_SCALE, this.dprScale - 0.15)
+      this.resize(this.width, this.height)
+    } else if (this.fastFrames >= RECOVER_STREAK && this.dprScale < 1) {
+      this.fastFrames = 0
+      this.dprScale = Math.min(1, this.dprScale + 0.15)
+      this.resize(this.width, this.height)
+    }
   }
 
   private readonly tick = (now: number) => {
     this.frame = 0
-    if (this.disposed || !this.controller) return
+    if (this.disposed || !this.started || !this.controller) return
     if (!this.visible || document.hidden) {
       this.last = 0
       return
